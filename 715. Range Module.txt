@@ -1,0 +1,68 @@
+*715. Range Module
+
+Solution : 
+
+class RangeModule {
+    // red black trees O(logN) search TC
+    TreeMap<Integer, Integer> range;
+    public RangeModule() {
+        range = new TreeMap();
+    }
+    
+    public void addRange(int start, int end) {
+        
+        // We want to compare the end of the given range with the key (start) of an exisisting
+        // possibly overlapping interval
+        Map.Entry<Integer, Integer> entry;
+        
+        while((entry = range.floorEntry(end)) != null) {
+            // edge case - if the end value of the entry is less than given start (no overlap!!)
+            if(entry.getValue() < start) break;
+            // calculate the min and max intervals
+            start = Math.min(start, entry.getKey());
+            end = Math.max(end, entry.getValue());
+            // remove overlapping entry to add new merged entries
+            range.remove(entry.getKey());
+        }
+        
+        // finally add the resultant merged interval
+        range.put(start, end);
+    }
+    
+    public boolean queryRange(int start, int end) {
+        
+        // We get the entry with greatest key lesser than given end
+        Map.Entry<Integer, Integer> entry = range.floorEntry(end);
+        
+        return ((entry != null)
+            && start >= entry.getKey()
+            && end <= entry.getValue());
+    }
+    
+    public void removeRange(int start, int end) {
+        // We get the entry with greatest key strictly lesser than given end
+        Map.Entry<Integer, Integer> entry;
+
+        while((entry = range.lowerEntry(end)) != null) {
+            // edge case - if the end value of the entry is less than given start (no overlap!!)
+            if(entry.getValue() < start) break;
+            // remove this overlapping entry
+            range.remove(entry.getKey());
+            // if start and end are cover the existing range, split the range removing start and end
+            if (entry.getKey() < start) range.put(entry.getKey(), start);
+            if (entry.getValue() > end) range.put(end, entry.getValue());
+            // update end to existing start
+            end = entry.getKey();
+            // edge case - if end becomes less than or equal to start - break!
+            if(end <= start) break;
+        }
+    }
+}
+
+/**
+ * Your RangeModule object will be instantiated and called as such:
+ * RangeModule obj = new RangeModule();
+ * obj.addRange(left,right);
+ * boolean param_2 = obj.queryRange(left,right);
+ * obj.removeRange(left,right);
+ */

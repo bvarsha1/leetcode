@@ -1,0 +1,63 @@
+*2104. Sum of Subarray Ranges
+
+Solution : 
+
+class Solution {
+    public long subArrayRanges(int[] nums) {
+        // monotonic stack for range queries
+        // here we need to determine the range in which a number acts as min
+        
+        //then sumOfAll(max*range) - sumOfAll(min*range) will be the answer
+        long sumOfMaxs = sumSubarrayMaxs(nums);
+        long sumOfMins = sumSubarrayMins(nums);
+        
+        System.out.println(sumOfMaxs + " " + sumOfMins);
+        return sumOfMaxs - sumOfMins;
+    }
+    
+    public long sumSubarrayMins(int[] nums) {
+        // monotonic incr stack
+        Stack<Integer> mono = new Stack<>();
+        
+        long sum = 0;
+        int n = nums.length;
+        mono.push(-1); // left boundary
+        for(int i = 0; i < n; i++) {
+            while(mono.size() > 1 && nums[mono.peek()] > nums[i]) {
+                int x = mono.pop();
+                sum += (long) (nums[x]*(x - mono.peek()))*(i - x);
+            }
+            mono.push(i);
+        }
+        
+        while(mono.size() > 1) {
+            int x = mono.pop();
+            sum += (long) (nums[x]*(x - mono.peek()))*(n - x);
+        }
+        
+        return sum;
+    }
+    
+    public long sumSubarrayMaxs(int[] nums) {
+        // monotonic decr stack
+        Stack<Integer> mono = new Stack<>();
+        
+        long sum = 0;
+        int n = nums.length;
+        mono.push(-1); // right boundary
+        for(int i = 0; i < n; i++) {
+            while(mono.size() > 1 && nums[mono.peek()] < nums[i]) {
+                int x = mono.pop();
+                sum += (long) (nums[x]*(x - mono.peek()))*(i - x);
+            }
+            mono.push(i);
+        }
+        
+        while(mono.size() > 1) {
+            int x = mono.pop();
+            sum += (long) (nums[x]*(x - mono.peek()) )*(n - x);
+        }
+        
+        return sum;
+    }
+}

@@ -1,0 +1,49 @@
+*348. Design Tic-Tac-Toe
+
+Solitions: 
+
+class TicTacToe {
+    int[] rows, cols;
+    int diag = 0, antidiag = 0;
+    int n; // size of square matrix
+    
+    public TicTacToe(int n) {
+        this.n = n;
+        // this approach cannot check validity of the move
+        // but description states - A move is guaranteed to be valid and is placed on an empty block.
+        rows = new int[n];
+        cols = new int[n];
+    }
+    
+    public int move(int row, int col, int player) {
+        int play = -1;
+        if(player == 1)
+            play = 1;
+        
+        rows[row] += play;
+        cols[col] += play;
+        
+        if(row == col)
+            diag += play;
+        
+        if(row + col == rows.length - 1)
+            antidiag += play;
+        
+        int n = rows.length;
+        
+        if(
+            Math.abs(rows[row]) == n ||
+            Math.abs(cols[col]) == n ||
+            Math.abs(diag) == n ||
+            Math.abs(antidiag) == n
+        ) return player;
+        
+        return 0;
+    }
+}
+
+/**
+ * Your TicTacToe object will be instantiated and called as such:
+ * TicTacToe obj = new TicTacToe(n);
+ * int param_1 = obj.move(row,col,player);
+ */

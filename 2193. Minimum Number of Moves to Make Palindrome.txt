@@ -1,0 +1,40 @@
+*2193. Minimum Number of Moves to Make Palindrome
+
+Solution :
+
+class Solution {
+    public int minMovesToMakePalindrome(String s) {
+        int steps = 0;
+        char[] sArr = s.toCharArray();
+        int lt = 0, rt = s.length() - 1;
+        while(lt < rt) {
+            int l = lt, r = rt;
+            // we try to bring r to the position where it is equal to l char
+            while(sArr[l] != sArr[r]) r--;
+            
+            if(l == r) {
+                swap(sArr, r);
+                steps++;
+                continue;
+            } else {
+                while(r < rt) {
+                    swap(sArr, r);
+                    steps++;
+                    r++;
+                }
+            }
+            
+            lt++;
+            rt--;
+        }
+        
+        return steps;
+    }
+    
+    static void swap(char[] ch, int i)
+    {
+        char temp = ch[i];
+        ch[i] = ch[i + 1];
+        ch[i + 1] = temp;
+    }
+}

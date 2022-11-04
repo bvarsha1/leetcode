@@ -1,0 +1,20 @@
+*2214. Minimum Health to Beat Game
+
+Solution :
+
+class Solution {
+    public long minimumHealth(int[] damage, int armor) {
+        
+        long sum = 1;
+        int max = 0;
+        // max damage to use armor ideally
+        int protection = armor;
+        for(int i = 0; i < damage.length; i++) {
+            max = Math.max(damage[i], max);
+            sum += damage[i];
+        }
+        
+        sum -= Math.min(max, armor);
+        return sum;
+    }
+}

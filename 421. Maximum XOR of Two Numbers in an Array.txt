@@ -1,0 +1,77 @@
+*421. Maximum XOR of Two Numbers in an Array
+
+Solution : 
+
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        int maxXOR = 0;
+        Trie t = new Trie();
+        for(int i = 0; i < nums.length; i++) {
+            // insert into trie
+            t.insertNumber(nums[i]);
+            // search max XOR that number can form
+            int currXOR = maxXORhelper(t, nums[i]);
+            maxXOR = Math.max(maxXOR, currXOR);
+        }
+        
+        return maxXOR;
+    }
+    
+    public int maxXORhelper(Trie t, int value) {
+        int currentAns = 0;
+        TrieNode temp = t.root;
+        
+        for(int i = 31; i >= 0; i--) {
+            int bit = (value>>i)&1;
+            if(bit == 0) {
+                // move right to search a 1 in order to maximize the XOR
+                if(temp.right != null) {
+                    temp = temp.right;
+                    currentAns += (1<<i);
+                }
+                else
+                    temp = temp.left;
+            } else {
+                // moving left
+                if(temp.left != null) {
+                    temp = temp.left;
+                    currentAns += (1<<i);
+                }
+                else
+                    temp = temp.right;
+            }
+        }
+        
+        return currentAns;
+    }
+}
+
+class TrieNode {
+    TrieNode left;
+    TrieNode right;
+}
+
+class Trie {
+    TrieNode root;
+    
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    public void insertNumber(int n) {
+        TrieNode temp = root;
+        
+        for(int i = 31; i >= 0; i--) {
+            int bit = (n>>i)&1;
+            if(bit == 0) {
+                if(temp.left == null)
+                    temp.left = new TrieNode();
+                temp = temp.left;
+            } else {
+                if(temp.right == null)
+                    temp.right = new TrieNode();
+                temp = temp.right;
+            }
+        }
+    }
+}

@@ -1,0 +1,80 @@
+*907. Sum of Subarray Minimums
+
+Solution :
+
+class Solution {
+    
+    public int sumSubarrayMins(int[] arr) {
+        // the contribution of element as minimum = elem * left range * right range
+        // monotonic stack problem
+        Stack<Integer> mono = new Stack();
+        
+        int[] left = new int[arr.length];
+        int[] right = new int[arr.length];
+        
+        //fill up the num of elements in the left incl element
+        for(int i = 0; i < arr.length; i++) {
+            while(!mono.isEmpty() && arr[mono.peek()] > arr[i]) {
+                mono.pop();
+            }
+            left[i] = (!mono.isEmpty()) ? i - mono.peek() : i + 1;
+            mono.push(i);
+        }
+        
+        //fill up the num of elements in the right incl element
+        mono.clear();
+        for(int i = arr.length - 1; i >= 0 ; i--) {
+            while(!mono.isEmpty() && arr[mono.peek()] >= arr[i]) {
+                mono.pop();
+            }
+            right[i] = (!mono.isEmpty()) ? mono.peek() - i : arr.length - i;
+            mono.push(i);
+        }
+        
+        long sum = 0;
+        long mod = (long) 1e9 + 7;
+        for(int i = 0; i < arr.length; i++) {
+            // Debug stmt - System.out.println(left[i] + ", " + right[i]);
+            sum = (sum + ((long) (arr[i]*right[i])*left[i]) )%mod;
+        }
+        
+        return (int) sum;
+    }
+    
+    public int sumSubarrayMinsOpt(int[] arr) {
+        
+        Stack<Integer> mono = new Stack<>();
+        long sum = 0;
+        long mod = (long) 1e9 + 7;
+        
+        // calculating for elements getting popped because of not being monotonic incr
+        mono.push(-1); // left bound limit
+        for(int i = 0; i < arr.length; i++) {
+            
+            // monotonic stack condition
+            while(mono.size() > 1 && arr[mono.peek()] > arr[i]) {
+                //the index of element being popped as its not monotonically inc
+                int x = mono.pop();
+                
+                // sum up the element being popped right away
+                // the contribution of element as minimum = elem * left range * right range
+                // i is the element causing  this element to be popped
+                // so i is the right bound in this case
+                sum += ( (long) (arr[x]*(x - mono.peek())) * (i - x) ) % mod;
+                sum = sum % mod;
+            }
+            
+            mono.push(i);
+        }
+        
+        // calculating for all the remaining monotonic incr elements in the stack
+        int rightBound = arr.length;
+        while(mono.size() > 1) {
+            int x = mono.pop();
+            sum += ( (long) (arr[x]*(x - mono.peek())) * (rightBound - x) ) % mod;
+            sum = sum % mod;
+        }
+        
+        return (int)sum;
+    }
+}

@@ -1,0 +1,40 @@
+*2115. Find All Possible Recipes from Given Supplies
+
+Solution :
+
+class Solution {
+    public List<String> findAllRecipes(String[] recipes, List<List<String>> ingredients, String[] supplies) {
+        HashMap<String, ArrayList<String>> graph = new HashMap();
+        HashMap<String, Integer> indegree = new HashMap();
+
+        for(int i = 0; i < recipes.length; i++) {
+            for(String x : ingredients.get(i)) {
+                ArrayList<String> list = graph.getOrDefault(x, new ArrayList<String>());
+                list.add(recipes[i]);
+                graph.put(x, list);
+                
+                indegree.put(recipes[i], indegree.getOrDefault(recipes[i], 0) + 1);
+            }
+        }
+        
+        ArrayList<String> result = new ArrayList();
+        // supplies have an indegree 0, so we push them to the queue
+        Queue<String> q = new ArrayDeque();
+        for(String supply : supplies)
+            q.offer(supply);
+        
+        while(!q.isEmpty()) {
+            String ingredient = q.poll();
+            if(!graph.containsKey(ingredient)) continue;
+            for(String next : graph.get(ingredient)) {
+                indegree.put(next, indegree.get(next) - 1);
+                if(indegree.get(next) == 0) {
+                    q.offer(next);
+                    result.add(next);
+                }
+            }
+        }
+        
+        return result;
+    }
+}

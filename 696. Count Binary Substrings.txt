@@ -1,0 +1,25 @@
+*696. Count Binary Substrings
+
+Solution : 
+
+class Solution {
+    public int countBinarySubstrings(String s) {
+        
+        int count = 0;
+        int prevCont = 0;
+        int currCont = 1;
+        for(int i = 1; i < s.length(); i++) {
+            if(s.charAt(i) == s.charAt(i-1)) {
+                currCont++;
+            } else {
+                // when the characters switch, we cal the min and add
+                count += Math.min(prevCont, currCont); // 0 + 2 + 2 + 2
+                prevCont = currCont;
+                currCont = 1;
+            }
+        }
+        
+        count += Math.min(prevCont, currCont); // need to cover last pattern
+        return count;
+    }
+}

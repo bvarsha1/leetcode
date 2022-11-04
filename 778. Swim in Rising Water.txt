@@ -1,0 +1,35 @@
+*778. Swim in Rising Water
+
+Solution : 
+
+class Solution {
+    public int swimInWater(int[][] grid) {
+        int n = grid.length;
+        boolean[][] seen = new boolean[n][n];
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>( (a, b) -> a[0] - b[0]);
+        
+        pq.offer(new int[]{grid[0][0], 0 , 0});
+        seen[0][0] = true;
+
+        int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        
+        while(!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            
+            if(curr[1] == n - 1 && curr[2] == n - 1) {
+                return curr[0];
+            }
+            
+            for(int[] dir : dirs) {
+                int[] next = new int[]{ curr[1] + dir[0], curr[2] + dir[1] };
+                
+                if(next[0] < 0 || next[0] >= n || next[1] < 0 || next[1] >= n || seen[next[0]][next[1]]) continue;
+                
+                pq.offer(new int[]{ Math.max(grid[next[0]][next[1]], curr[0]), next[0], next[1] });
+                seen[next[0]][next[1]] = true;
+            }
+        }
+        
+        return -1;
+    }
+}

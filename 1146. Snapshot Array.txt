@@ -1,0 +1,40 @@
+*1146. Snapshot Array
+
+Solution :
+
+class SnapshotArray {
+    int currSnap = 0;
+    HashMap<Integer, TreeMap<Integer, Integer>> map;
+    public SnapshotArray(int length) {
+        map = new HashMap();
+    }
+    
+    public void set(int index, int val) {
+        TreeMap<Integer, Integer> arraySnaps = map.getOrDefault(index, new TreeMap<>());
+        arraySnaps.put(currSnap, val);
+        map.put(index, arraySnaps);
+    }
+    
+    public int snap() {
+        return currSnap++;
+    }
+    
+    public int get(int index, int snap_id) {
+        
+        if(map.containsKey(index)) {
+            if(map.get(index).floorEntry(snap_id) != null) {
+                return map.get(index).floorEntry(snap_id).getValue();
+            }
+        }
+        
+        return 0;
+    }
+}
+
+/**
+ * Your SnapshotArray object will be instantiated and called as such:
+ * SnapshotArray obj = new SnapshotArray(length);
+ * obj.set(index,val);
+ * int param_2 = obj.snap();
+ * int param_3 = obj.get(index,snap_id);
+ */

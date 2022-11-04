@@ -1,0 +1,38 @@
+*818. Race Car
+
+Solution :
+
+class Solution {
+    public int racecar(int target) {
+        LinkedList<CarState> q = new LinkedList();
+        q.add(new CarState(0, 1, 0));
+        
+        while(!q.isEmpty()) {
+            CarState curr = q.remove(0);
+            
+            if(curr.position == target) return curr.moves;
+            
+            if( (curr.position + curr.speed > target && curr.speed > 0) ||
+                (curr.position + curr.speed < target && curr.speed < 0)
+              ) {
+                int speed = curr.speed > 0 ? -1 : 1;
+
+                q.add(new CarState(curr.position, speed, curr.moves + 1));
+            }
+
+             q.add(new CarState(curr.position + curr.speed, curr.speed * 2, curr.moves + 1));
+        }
+        
+        return -1;
+    }
+}
+
+class CarState {
+    int position, speed, moves;
+    
+    public CarState(int p, int s, int m) {
+        position = p;
+        speed = s;
+        moves = m;
+    }
+}

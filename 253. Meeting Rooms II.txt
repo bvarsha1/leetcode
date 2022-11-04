@@ -1,0 +1,32 @@
+*253. Meeting Rooms II
+
+Solitions: 
+
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        int[] start = new int[intervals.length];
+        int[] end = new int[intervals.length];
+        
+        for(int i = 0; i < intervals.length; i++) {
+            start[i] = intervals[i][0];
+            end[i] = intervals[i][1];
+        }
+        
+        // sort both
+        Arrays.sort(start);
+        Arrays.sort(end);
+        
+        int count = 0;
+        int sidx = 0, eidx = 0;
+        while(sidx < start.length) {
+            if(start[sidx] >= end[eidx]) {
+                count--;
+                eidx++;
+            }
+            count++;
+            sidx++;
+        }
+        
+        return count;
+    }
+}

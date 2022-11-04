@@ -1,0 +1,41 @@
+*528. Random Pick with Weight
+
+Solution :
+
+class Solution {
+    int[] wSum;
+    int totalSum;
+    Random r = new Random();
+    public Solution(int[] w) {
+        wSum = new int[w.length];
+        int sum = 0;
+        for(int i = 0; i < w.length; i++) {
+            wSum[i] = sum + w[i];
+            sum += w[i];
+        }
+        
+        totalSum = sum;
+    }
+    
+    public int pickIndex() {
+        int index = r.nextInt(totalSum) + 1;
+        
+        int lo = 0, hi = wSum.length - 1;
+        while(lo < hi) {
+            int mid = (lo + hi) / 2;
+            if(wSum[mid] == index)
+                return mid;
+            else if(wSum[mid] < index)
+                lo = mid + 1;
+            else
+                hi = mid;
+        }
+        return lo;
+    }
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(w);
+ * int param_1 = obj.pickIndex();
+ */

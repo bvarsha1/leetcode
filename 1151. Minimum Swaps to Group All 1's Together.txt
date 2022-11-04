@@ -1,0 +1,27 @@
+*1151. Minimum Swaps to Group All 1's Together
+
+Solution :
+
+class Solution {
+    public int minSwaps(int[] data) {
+        
+        int windowSize = 0;
+        // find the total num of 1s - this also gives us the window size
+        for(int i = 0; i < data.length; i++)
+            windowSize += data[i];
+        
+        int i = 0, j = 0; // 2 pointers
+        int currOne = 0, maxOne = 0; // keep track of current number of 1s in curr window and max number of 1s in any window
+        while(j < data.length) {
+            currOne += data[j++];
+            
+            if(j - i > windowSize) {
+                currOne -= data[i++];
+            }
+            
+            maxOne = Math.max(currOne, maxOne);
+        }
+        
+        return windowSize - maxOne;
+    }
+}

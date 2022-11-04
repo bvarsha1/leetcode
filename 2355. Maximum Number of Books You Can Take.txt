@@ -1,0 +1,29 @@
+*2355. Maximum Number of Books You Can Take
+
+Solution :
+
+class Solution {
+    public long maximumBooks(int[] books) {
+        // monotonic stack - the elements stricly increasing are the books we take
+        long[] dp = new long[books.length];
+        Stack<Integer> s = new Stack();
+        
+        long max = 0;
+        for(int i = 0; i < books.length; i++) {
+            while(!s.isEmpty() && books[s.peek()] >= books[i] - i + s.peek()) {
+                s.pop();
+            }
+            dp[i] = (s.isEmpty() ? 0 : dp[s.peek()]) + getNSum(books[i]) - getNSum(books[i] - i +  (s.isEmpty() ? - 1 : s.peek()));
+            max = Math.max(dp[i], max);
+            s.push(i);
+        }
+        
+        return max;
+    }
+    
+    public long getNSum(int n) {
+        if(n < 0) return 0;
+        
+        return (long)((long)n * (long)(n + 1)) / 2;
+    }
+}

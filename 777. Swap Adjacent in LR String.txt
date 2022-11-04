@@ -1,0 +1,51 @@
+*777. Swap Adjacent in LR String
+
+Solution : 
+
+class Solution {
+    // https://www.youtube.com/watch?v=3_7tsztReyE
+    public boolean canTransform(String start, String end) {
+        if(start.length() != end.length()) return false;
+        int n = start.length();
+        // we push the pairs of L/R chars with their respective indexes
+        ArrayList<LRIndex> l1 = new ArrayList(), l2 = new ArrayList();
+        
+        for(int i = 0; i < n; i++) {
+            if(start.charAt(i) != 'X')
+                l1.add(new LRIndex(start.charAt(i), i));
+            
+            if(end.charAt(i) != 'X')
+                l2.add(new LRIndex(end.charAt(i), i));
+        }
+        
+        // case 1 - check size of L/R s in start and end - should match
+        if(l1.size() != l2.size()) return false;
+        
+        // case 2 - check if the ordering of L & Rs are the same for both lists
+        // case 3 - if above is true - then check if the start index of Ls >= end index of Ls
+        //        and start index of Rs <= end index of Rs
+        for(int i = 0; i < l1.size(); i++) {
+            if(l1.get(i).ch == 'L' && l2.get(i).ch == 'L') {
+                if(l1.get(i).idx < l2.get(i).idx)
+                    return false;
+            } else if(l1.get(i).ch == 'R' && l2.get(i).ch == 'R') {
+                if(l1.get(i).idx > l2.get(i).idx)
+                    return false;
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+
+class LRIndex {
+    char ch;
+    int idx;
+    
+    public LRIndex(char ch, int i) {
+        this.ch = ch;
+        this.idx = i;
+    }
+}

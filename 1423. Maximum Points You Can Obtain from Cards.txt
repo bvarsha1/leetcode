@@ -1,0 +1,24 @@
+*1423. Maximum Points You Can Obtain from Cards
+
+Solution :
+
+class Solution {
+    public int maxScore(int[] cardPoints, int k) {
+        int front = 0, rear = 0;
+        int n = cardPoints.length;
+        
+        // calculate frontPoints upto k
+        for(int i = 0; i < k; i++)
+            front += cardPoints[i];
+        
+        int max = front;
+        // now check the score from back and find max
+        for(int i = k - 1; i >= 0; i--) {
+            rear += cardPoints[n - (k - i)];
+            front -= cardPoints[i];
+            max = Math.max(max, front + rear);
+        }
+        
+        return max;
+    }
+}

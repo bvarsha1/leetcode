@@ -1,0 +1,35 @@
+*1567. Maximum Length of Subarray With Positive Product
+
+Solution :
+
+class Solution {
+    public int getMaxLen(int[] nums) {
+        int pos = 0, neg = 0;
+        int res = 0;
+        
+        //we keep track of max pos, neg lengths
+        for(int x : nums) {
+            if(x == 0) {
+                pos = 0;
+                neg = 0;
+            } else if( x > 0) {
+                pos++;
+                neg = (neg == 0) ? 0 : neg + 1;
+            } else {
+                // we switch because once a neg num is encountered, the neg length becomes same as positive and vice versa
+                // if first neg then,  we start over for pos
+                int tmp = pos;
+                pos = neg;
+                neg = tmp;
+                neg++;
+                if(pos != 0)
+                    pos++;
+            }
+            
+            // as each step we track max positive length as we traverse
+            res = Math.max(res, pos);
+        }
+        
+        return res;
+    }
+}

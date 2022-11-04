@@ -1,0 +1,71 @@
+*489. Robot Room Cleaner
+
+Solution :
+
+/**
+ * // This is the robot's control interface.
+ * // You should not implement it, or speculate about its implementation
+ * interface Robot {
+ *     // Returns true if the cell in front is open and robot moves into the cell.
+ *     // Returns false if the cell in front is blocked and robot stays in the current cell.
+ *     public boolean move();
+ *
+ *     // Robot will stay in the same cell after calling turnLeft/turnRight.
+ *     // Each turn will be 90 degrees.
+ *     public void turnLeft();
+ *     public void turnRight();
+ *
+ *     // Clean the current cell.
+ *     public void clean();
+ * }
+ */
+
+// https://www.youtube.com/watch?v=cmMBHvtNW38
+
+class Solution {
+    // up, right, down, left
+    int[][] dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    HashSet<String> visited = new HashSet();
+    Robot robot;
+    
+    public void cleanRoom(Robot robot) {
+        this.robot = robot;
+        dfs(0, 0, 0);
+    }
+    
+    public void dfs(int row, int col, int d) {
+        // keep track of direction to make sure we move in the right diretion using the api
+        String key = row + ":" + col;
+
+        visited.add(key); // mark visited ( we dont have bounds here, we just keep track of relative coords from start)
+        robot.clean(); // process cell (ie. clean)
+        
+        // move to neighbouring location
+        // moving clockwise - up, right, down and left
+        // direction will be 0-3
+        // 0 - up, 1 - right, 2 - down, 3 - left ( also the order of representation on the dirs array)
+        for(int i = 0; i < dirs.length; i++) {
+            int nextD = (d + i) % 4;
+            int nextR = row + dirs[nextD][0];
+            int nextC = col + dirs[nextD][1];
+            
+            // if the cell is not visited, and robot can move in the direction
+            if(!visited.contains(nextR + ":" + nextC) && robot.move()) {
+                dfs(nextR, nextC, nextD); // once we return from the dfs we backtrack
+                goBack();
+            }
+            // face the next cell
+            robot.turnRight();
+        }
+    }
+    
+    public void goBack() {
+        // to go back from where it came,
+        //  it should make a 180 deg turn, move and then make a 180 deg turn again to maintain prev direction
+        robot.turnRight();
+        robot.turnRight();
+        robot.move();
+        robot.turnRight();
+        robot.turnRight();
+    }
+}

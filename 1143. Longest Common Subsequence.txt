@@ -1,0 +1,59 @@
+*1143. Longest Common Subsequence
+
+Solution :
+
+class Solution {
+    int[][] dp;
+    public int longestCommonSubsequence(String text1, String text2) {
+        // Approach 1 - DP Top Down - O(MN)
+        // dp = new int[text1.length()][text2.length()];
+        // for(int[] e : dp) {
+        //     Arrays.fill(e, -1);
+        // }
+        // return lcsTD(text1, text2, 0 , 0);
+        
+        // Approach 2 - Memo Bottom UP - O(MN)
+        return lcsBU(text1, text2);
+    }
+    
+    public int lcsTD(String s1, String s2, int i, int j) {
+        // base case
+        if(i >= s1.length() || j >= s2.length()) return 0;
+        
+        // memoization
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        
+        // rec case
+        int ans = 0;
+        if(s1.charAt(i) == s2.charAt(j)) {
+            ans = 1 + lcsTD(s1, s2, i + 1, j + 1);
+        } else {
+            ans = Math.max(
+                lcsTD(s1, s2, i + 1, j),
+                lcsTD(s1, s2, i, j + 1)
+            );
+        }
+        
+        dp[i][j] = ans;
+        return dp[i][j];
+    }
+    
+    public int lcsBU(String s1, String s2) {
+        int m = s1.length();
+        int n = s2.length();
+        int[][] memo = new int[m + 1][n + 1];
+        
+        for(int i = 1; i <= m; i++) {
+            for(int j = 1; j <= n; j++) {
+                if(s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    memo[i][j] = 1 + memo[i - 1][j - 1];
+                } else {
+                    memo[i][j] = Math.max(memo[i - 1][j], memo[i][j - 1]);
+                }
+            }
+        }
+        
+        return memo[m][n];
+    }
+}

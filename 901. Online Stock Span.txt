@@ -1,0 +1,28 @@
+*901. Online Stock Span
+
+Solution :
+
+class StockSpanner {
+    Stack<Pair<Integer,Integer>> stack;
+    int idx;
+    
+    public StockSpanner() {
+        stack = new Stack();
+        idx = 0;
+    }
+    
+    public int next(int price) {
+        while(!stack.isEmpty() && price >= stack.peek().getValue())
+            stack.pop();
+        int result = (stack.isEmpty()) ? idx + 1 : idx - stack.peek().getKey();
+        stack.push(new Pair(idx++, price));
+        
+        return result;
+    }
+}
+
+/**
+ * Your StockSpanner object will be instantiated and called as such:
+ * StockSpanner obj = new StockSpanner();
+ * int param_1 = obj.next(price);
+ */

@@ -1,0 +1,28 @@
+*926. Flip String to Monotone Increasing
+
+Solution :
+
+class Solution {
+    public int minFlipsMonoIncr(String s) {
+        if(s.length() <= 1) return 0;
+
+        // oneCount keeps track of number of 1s in the string
+        // flipCount keeps track of which flips are becoming larger
+
+        // example - 00011000
+        // first we decide to flip 0s - so count 0
+        // but unless more 1s than 0 this keeps resetting to num of 1s
+        // after these iterations it picks the min num of flips whether 0s or 1s
+        int oneCount = 0, flipCount = 0;
+        for(char ch : s.toCharArray()) {
+            if(ch == '1')
+                oneCount++;
+            else
+                flipCount++;
+            
+            flipCount = Math.min(oneCount, flipCount);
+        }
+
+        return flipCount;
+    }
+}

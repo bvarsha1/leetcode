@@ -1,0 +1,24 @@
+*2262. Total Appeal of A String
+
+Solution :
+
+class Solution {
+    public long appealSum(String s) {
+        
+        int[] dp = new int[s.length() + 1];
+        int[] lastIdx = new int[26];
+        Arrays.fill(lastIdx, -1);
+        
+        long sum = 0;
+        for(int i = 0; i < s.length(); i++) {
+            int idx = s.charAt(i) - 'a';
+            // dp[n] = dp[n - 1] + (1 = cost of adding 1 char) + number of chars between 2 occurrences
+            dp[i + 1] = dp[i] + i - lastIdx[idx];
+            sum += dp[i + 1];
+            
+            lastIdx[idx] = i;
+        }
+        
+        return sum;
+    }
+}

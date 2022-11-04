@@ -1,0 +1,34 @@
+*828. Count Unique Characters of All Substrings of a Given String
+
+Solution :
+
+class Solution {
+    //This map maintains the characters and all their occurrences
+    HashMap<Character, ArrayList<Integer>> map = new HashMap();
+
+    public int uniqueLetterString(String s) {
+        // we need to figure out the contribution of each character as unique character to the substrings of the string
+
+        //populate the map with the positions of the characters in the string 
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            ArrayList<Integer> positions = map.getOrDefault(ch, new ArrayList<Integer>());
+            positions.add(i);
+            map.put(ch, positions);
+        }
+
+        int total = 0;
+        for(char ch : map.keySet()) {
+            int prevPos = -1;
+            ArrayList<Integer> positions = map.get(ch);
+            for(int i = 0; i < positions.size(); i++) {
+                int currPos = positions.get(i);
+                int nextPos = (i == positions.size() - 1) ? s.length() : positions.get(i + 1);
+                total += (currPos - prevPos) * (nextPos - currPos);
+                prevPos = currPos;
+            }
+        }
+
+        return total;
+    }
+}
