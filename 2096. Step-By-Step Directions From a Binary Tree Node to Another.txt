@@ -1,0 +1,56 @@
+*2096. Step-By-Step Directions From a Binary Tree Node to Another
+
+Solution : 
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public String getDirections(TreeNode root, int start, int dest) {
+        if(root == null || start == dest) return new String();
+        
+        // initiate a string builder obj for path
+        StringBuilder s = new StringBuilder(), d = new StringBuilder();
+        getPath(root, start, s);
+        getPath(root, dest, d);
+        
+        // reverse them because we are traversing top to bottom
+        s.reverse(); d.reverse();
+        int i = 0; int max = Math.min(s.length(), d.length());
+        //find the place until which the path matches - that will be the path to LCA
+        while( i < max && s.charAt(i) == d.charAt(i))
+            i++;
+        
+        // i will currently be at the LCA
+        // repeat U until the length of string s, and the print d from i to end
+        String path = "U".repeat(s.length() - i) + d.toString().substring(i);
+        
+        return path;
+    }
+    
+    public boolean getPath(TreeNode root, int val, StringBuilder path) {
+        // we dont need to check root is null as we are checking below for left and right nodes
+        if(root.val == val) return true;
+        
+        // we first traverse to see if there is a path and then append based on which function makes true
+        // also at a given instance we can either choose left or right
+        if(root.left != null && getPath(root.left, val, path))
+            path.append("L");
+        else if(root.right != null && getPath(root.right, val, path))
+            path.append("R");
+        
+        return path.length() > 0;
+    }
+}

@@ -1,0 +1,91 @@
+*1268. Search Suggestions System
+
+Solution : 
+
+class Solution {
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        // preorder traversal in a trie will give lexicographically sorted words
+        
+        Trie t = new Trie();
+        
+        // insert products in trie
+        t.insertWords(products);
+        
+        List<List<String>> suggestions = new ArrayList();
+        // for every substring, search the trie with substring as prefix
+        for(int i = 1; i <= searchWord.length(); i++) {
+            String prefix = searchWord.substring(0, i);
+            suggestions.add(t.searchPreOrder(prefix));
+        }
+        
+        return suggestions;
+    }
+}
+
+class TrieNode {
+    String word;
+    TrieNode[] children = new TrieNode[26];
+    
+    public TrieNode() {
+        word = ""; // will be set when its a full word
+        Arrays.fill(children, null);
+    }
+}
+
+class Trie{
+    TrieNode root;
+    
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    public void insertWords(String[] words) {
+        for(String word : words) {
+            TrieNode temp = root;
+            
+            for(char ch : word.toCharArray()) {
+                int idx = ch - 'a';
+                if(temp.children[idx] == null)
+                    temp.children[idx] = new TrieNode();
+                
+                temp = temp.children[idx];
+            }
+            
+            temp.word = word;
+        }
+    }
+    
+    // search for prefix - lexicographically
+    public ArrayList<String> searchPreOrder(String prefix) {
+        TrieNode temp = root;
+        
+        // searching for prefix
+        for(char ch : prefix.toCharArray()) {
+            int idx = ch - 'a';
+            if(temp.children[idx] == null)
+                return new ArrayList<String>();
+            
+            temp = temp.children[idx];
+        }
+        
+        // pick first 3 words
+        ArrayList<String> suggestions = new ArrayList<>();
+        preOrderUtil(temp, suggestions);
+
+        return suggestions;
+    }
+    
+    public void preOrderUtil(TrieNode node, ArrayList<String> suggestions) {
+        if(suggestions.size() >= 3) return;
+        
+        if(node != null && node.word != "") {
+            suggestions.add(node.word);
+        }
+
+        for(int i = 0; i < 26; i++) {
+             if(node.children[i] != null) {
+                 preOrderUtil(node.children[i], suggestions);
+             }
+        }
+    }
+}

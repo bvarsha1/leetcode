@@ -1,0 +1,36 @@
+*2135. Count Words Obtained After Adding a Letter
+
+Solution :
+
+/*
+https://leetcode.com/problems/count-words-obtained-after-adding-a-letter/discuss/1809326/Java-oror-beats-95-oror-best-question-to-understand-bitmask
+*/
+
+class Solution {
+    // store the start words, as each word being sorted
+    HashSet<String> sorted = new HashSet();
+    public int wordCount(String[] startWords, String[] targetWords) {
+        for(String word : startWords) {
+            char w[] = word.toCharArray();
+            Arrays.sort(w);
+            sorted.add(new String(w));
+        }
+        
+        int count = 0;
+        for(String word : targetWords) {
+            for(int i = 0; i < word.length(); i++) {
+                // such that ith char is not included
+                String res = word.substring(0, i) + word.substring(i + 1);
+                char r[] = res.toCharArray();
+                Arrays.sort(r);
+                // check if sorted string in start words set
+                if( sorted.contains(new String(r)) ) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        
+        return count;
+    }
+}

@@ -1,0 +1,31 @@
+*2158. Amount of New Area Painted Each Day
+
+Solution :
+
+class Solution {
+    // start to end areas
+    HashMap<Integer, Integer> areaMap = new HashMap();
+    public int[] amountPainted(int[][] paint) {
+        int[] work = new int[paint.length];
+        if(paint.length == 0) return work;
+        
+        for(int i = 0; i < paint.length; i++) {
+            int start = paint[i][0], end = paint[i][1];
+            int daysWork = 0;
+            while(start < end) {
+                if(!areaMap.containsKey(start)) {
+                    areaMap.put(start, end);
+                    daysWork++;
+                    start++;
+                } else {
+                    int lastPainted = areaMap.get(start);
+                    areaMap.put(start, Math.max(lastPainted, end));
+                    start = lastPainted;
+                }
+            }
+            work[i] = daysWork;
+        }
+        
+        return work;
+    }
+}

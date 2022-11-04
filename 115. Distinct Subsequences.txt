@@ -1,0 +1,65 @@
+*115. Distinct Subsequences
+
+Solution : 
+
+class Solution {
+    int[][] dp;
+    public int numDistinct(String s, String t) {
+        // Approach 1 - TopDown - O(mn)
+//         dp = new int[s.length()][t.length()];
+//         for(int[] e : dp)
+//             Arrays.fill(e, -1);
+        
+//         return numDistinctTD(s, t, s.length() - 1, t.length() - 1);
+        
+        // Approach 2 - BottomUp - O(mn)
+        return numDistinctBU(s, t);
+    }
+    
+    public int numDistinctBU(String s, String t) {
+        int m = s.length();
+        int n = t.length();
+        int[][] memo = new int[m + 1][n + 1];
+        
+        for(int i = 0; i < m; i++) {
+            memo[i][0] = 1;
+        }
+        
+        for(int i = 1; i <= m; i++) {
+            for(int j = 1; j <= n; j++) {
+                memo[i][j] = memo[i - 1][j];
+                if(s.charAt(i - 1) == t.charAt(j - 1)) {
+                    memo[i][j] += memo[i - 1][j - 1];
+                }
+            }
+        }
+        
+        return memo[m][n];
+    }
+    
+    public int numDistinctTD(String s, String t, int i, int j) {
+        //base cases - 2 cases
+        // we could match whole of t with some of s or whole of s
+        if((i == -1 && j == -1 ) || j == -1)
+            return 1;
+        
+        // we count match whole of t with whole of s
+        if(i == -1)
+            return 0;
+        
+        // memoization
+        if(dp[i][j] != -1)
+            return dp[i][j];
+        
+        // rec case
+        // when matching happens
+        int ans = numDistinctTD(s, t, i - 1, j);
+        if(s.charAt(i) == t.charAt(j)) {
+            ans += numDistinctTD(s, t, i - 1, j - 1);
+        }
+        
+        dp[i][j] = ans;
+        
+        return dp[i][j];
+    }
+}

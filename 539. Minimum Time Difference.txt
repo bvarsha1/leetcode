@@ -1,0 +1,27 @@
+*539. Minimum Time Difference
+
+Solution : 
+
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        ArrayList<Integer> timeInMins = new ArrayList();
+        
+        for(String time : timePoints) {
+            String[] hhmm = time.split(":");
+            int hh = Integer.parseInt(hhmm[0]);
+            int mm = Integer.parseInt(hhmm[1]);
+            timeInMins.add(hh * 60 + mm);
+        }
+        
+        // sort the time
+        Collections.sort(timeInMins);
+        
+        int minDiff = Integer.MAX_VALUE;
+        for(int i = 0; i < timeInMins.size() - 1; i++)
+            minDiff = Math.min(minDiff, timeInMins.get(i + 1) - timeInMins.get(i));
+        
+        int invertedMins = 1440 + timeInMins.get(0) - timeInMins.get(timeInMins.size() - 1);
+        
+        return Math.min(minDiff, invertedMins);
+    }
+}

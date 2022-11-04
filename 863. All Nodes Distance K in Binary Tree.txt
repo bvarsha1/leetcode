@@ -1,0 +1,74 @@
+*863. All Nodes Distance K in Binary Tree
+
+Solution : 
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public void levelKFromTarget(TreeNode root, int k, List<Integer> result) {
+        if(root == null) return;
+        
+        if(k == 0) {
+            result.add(root.val);
+            return;
+        }
+        
+        levelKFromTarget(root.left, k - 1, result);
+        levelKFromTarget(root.right, k -1, result);
+    }
+    
+    public int distanceKFromTarget(TreeNode root, TreeNode target, int k, List<Integer> result) {
+        // base case - target not found
+        if(root == null) return -1;
+        
+        // target found at root
+        if(root == target) {
+            levelKFromTarget(root, k, result);
+            return 0;
+        }
+        
+        // search left
+        int leftDist = distanceKFromTarget(root.left, target, k, result);
+        if(leftDist != -1) { // meaning node found in left subtree
+            if(leftDist + 1 == k) {
+                // special case where root itself is at distance k from node
+                result.add(root.val);
+            } else {
+                // move to right subtree to print nodes at level (k - d - 2) from right subtree root
+                levelKFromTarget(root.right, k - leftDist - 2, result);
+            }
+            return leftDist + 1;
+        }
+        
+        // search right
+        int rightDist = distanceKFromTarget(root.right, target, k, result);
+        if(rightDist != -1) {
+            if(rightDist + 1 == k) {
+                // special case where root itself is at distance k from node
+                result.add(root.val);
+            } else {
+                // move to left subtree to print nodes at level (k - d - 2) from left subtree root
+                levelKFromTarget(root.left, k - rightDist - 2, result);
+            }
+            // finally return distance by incr 1
+            return rightDist + 1;
+        }
+        
+        return -1;
+    }
+    
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        List<Integer> result = new ArrayList<>();
+        
+        distanceKFromTarget(root, target, k , result);
+            
+        return result;
+    }
+}

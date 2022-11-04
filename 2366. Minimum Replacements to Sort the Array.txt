@@ -1,0 +1,30 @@
+*2366. Minimum Replacements to Sort the Array
+
+Solution :
+
+class Solution {
+    public long minimumReplacement(int[] nums) {
+        if(nums.length <= 1)
+            return 0;
+        
+        int n = nums.length;
+        
+        int prev = nums[n - 1];
+        long split = 0;
+        // traverse from back to forward
+        for(int i = n - 2; i >= 0; i--) {
+            int num = nums[i];
+            // if number is not non-dec when compared to prev
+            // check num of divisions we have for the number
+            int k = num / prev;
+            if(num % prev != 0) {
+                k++;
+                // max prev number we can have by dividing by k
+                prev = num / k;
+            }
+            split += k - 1;
+        }
+        
+        return split;
+    }
+}

@@ -1,0 +1,29 @@
+*1499. Max Value of Equation
+
+Solution : 
+
+class Solution {
+    public int findMaxValueOfEquation(int[][] points, int k) {
+        // we group the equation as = (yi - xi) + (yj + xj) - to reduce recomputations
+        // since yi - xi is the part that effects maximization problem, we store that in priority queue
+        // in PQ we store the yi - xi and the xth co-ord
+        // we sort the yi - xi from high to low, whereas when its equal we check for lowest xi
+        PriorityQueue<int[]> pq = new PriorityQueue<>( (a, b) -> (a[0] == b[0]) ? a[1] - b[1] : b[0] - a[0] );
+        
+        int res = Integer.MIN_VALUE;;
+        for(int[] point : points) {
+            // remove from priority queue if xj - xi > k
+            while(!pq.isEmpty() && point[0] - pq.peek()[1] > k) {
+                pq.poll();
+            }
+            
+            if(!pq.isEmpty())
+                res = Math.max(res, pq.peek()[0] + point[0] + point[1]);
+            
+            // irrelevant to any condition, add to queue
+            pq.offer(new int[]{point[1] - point[0], point[0]});
+        }
+        
+        return res;
+    }
+}

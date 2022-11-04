@@ -1,0 +1,62 @@
+*Text Justification
+
+Solution : 
+
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> result = new ArrayList();
+
+        int i = 0;
+        while(i < words.length) {
+            int lineLen = words[i].length();
+            int j = i + 1;
+            while(j < words.length && (lineLen + words[j].length() + (j - i - 1) < maxWidth )) {
+                lineLen += words[j].length();
+                j++;
+            }
+            int diff = maxWidth - lineLen;
+            if(j - i == 1 || j >= words.length)
+                result.add(leftJustify(words, i, j, diff));
+            else
+                result.add(middleJustify(words, i, j, diff));
+
+            i = j;
+        }
+                       
+        return result;
+    }
+    
+    public String middleJustify(String[] words, int i, int j, int diff) {
+        StringBuilder lineObj = new StringBuilder();
+        int spaceNeeded = j - i - 1, spaces = 0, spaceBal = 0;
+        if(spaceNeeded != 0) {
+            spaces = diff / spaceNeeded;
+            spaceBal = diff % spaceNeeded;
+        }
+
+        while(i < j) {
+            lineObj.append(words[i]);
+            if(j - i -1 > 0)
+                lineObj.append(" ".repeat(spaces));
+            if(spaceBal > 0) {
+                lineObj.append(" ");
+                spaceBal--;
+            }
+            i++;
+        }
+        
+        return lineObj.toString();
+    }
+    
+    public String leftJustify(String[] words, int i, int j, int diff) {
+        StringBuilder lineObj = new StringBuilder(words[i]);
+        int spacesOnRight = diff - j + i + 1;
+
+        for(int k = i + 1; k < j; k++) {
+            lineObj.append(" " + words[k]);
+        }
+        lineObj.append(" ".repeat(spacesOnRight));
+        
+        return lineObj.toString();
+    }
+}

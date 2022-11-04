@@ -1,0 +1,51 @@
+*2402. Meeting Rooms III
+
+Solution :
+
+class Solution {
+    public int mostBooked(int n, int[][] meetings) {
+        // as we're only going to take the start time order once - we can simply sort the array by start timestamps
+        // we also dont need to retain the order of meetings
+        Arrays.sort(meetings, (a, b) -> a[0] - b[0]);
+        
+        // for running track of end-time meetings and the room they map to, so we use heap
+        // note : we use long to allow for end time to be extended from start time until the rooms become available
+        // the PQ has end-time : roomId mapping; if end time is same, we pick room with smaller id
+        PriorityQueue<long[]> pq = new PriorityQueue<>(
+            (a, b) -> a[0] == b[0] ? Long.compare(a[1], b[1]) : Long.compare(a[0], b[0])
+        );
+
+        int[] roomCount = new int[n];
+        
+        // we add 0 as end time for all rooms initially
+        for(int i = 0; i < n; i++) {
+            pq.offer(new long[]{ 0, i });
+        }
+
+        int maxRoomId = 0;
+        // iterate over the meetings
+        for(int[] meeting : meetings) {
+            int starttime = meeting[0];
+            int endtime = meeting[1];
+
+            // reorder the room, in case multiple rooms are available with different end times
+            while(pq.peek()[0] < starttime)
+                pq.offer(new long[] { starttime, pq.poll()[1] });
+            
+            long[] ongoing = pq.poll();
+            int currRoom = (int) ongoing[1];
+            long meetingEnd = ongoing[0] + (endtime - starttime);
+            roomCount[currRoom]++;
+            
+            if(roomCount[currRoom] > roomCount[maxRoomId]) {
+                maxRoomId = currRoom;
+            } else if(roomCount[currRoom] == roomCount[maxRoomId]) {
+                maxRoomId = Math.min(maxRoomId, currRoom);
+            }
+
+            pq.offer(new long[] { meetingEnd, currRoom });
+        }
+
+        return maxRoomId;
+    }
+}

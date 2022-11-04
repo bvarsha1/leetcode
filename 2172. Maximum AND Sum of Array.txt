@@ -1,0 +1,40 @@
+*2172. Maximum AND Sum of Array
+
+Solution :
+
+class Solution {
+    public int countSetBits(int n) {
+        int ans = 0;
+        while(n > 0) {
+            n = n & (n - 1);
+            ans++;
+        }
+        return ans;
+    }
+    
+    public int maximumANDSum(int[] nums, int numSlots) {
+        int numElements = 2 * numSlots;
+        int[] newNums = new int[numElements];
+        
+        int totPerm = (1 << numElements);
+        int[] dp = new int[totPerm];
+        // fill nums until its size, else it will remain zero
+        for(int i = 0; i < nums.length; i++)
+            newNums[i] = nums[i];
+        
+        for(int i = 0; i < totPerm; i++) {
+            int count = countSetBits(i);
+            int slot = (count + 1) / 2;
+            for(int j = 0; j < numElements; j++) {
+                // check if the jth bit is set, only then go to its off state
+                if((i & (1 << j)) != 0)
+                    dp[i] = Math.max(
+                        dp[i],
+                        dp[(i ^ (1 << j))] + (newNums[j] & slot)
+                    );
+            }
+        }
+        
+        return dp[totPerm - 1];
+    }
+}

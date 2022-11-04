@@ -1,0 +1,64 @@
+*1606. Find Servers That Handled Most Number of Requests
+
+Solution : 
+
+class Solution {
+    public List<Integer> busiestServers(int k, int[] arrival, int[] load) {
+        // to keep count of requests on each server
+        int[] count = new int[k];
+        
+        // taking tree set to find the request % k value quickly in log n
+        TreeSet<Integer> available = new TreeSet();
+        // add all servers to available at first
+        for (int num = 0; num < k; num++) {
+            available.add(num);
+        }
+        
+        // Priority queue to keep the busy servers - by arrival time, based off of end time
+        // this queue will contain end time, server id
+        Queue<int[]> busy = new PriorityQueue<>( (a, b) -> a[0] - b[0]);
+        
+        for(int i = 0; i< arrival.length; i++) {
+            int start = arrival[i];
+            int end = start + load[i];
+            
+            // check for newly freed servers based on the start time for this request
+            // free them up
+            while( !busy.isEmpty() && busy.peek()[0] <= start) {
+                int[] freed = busy.poll();
+                available.add(freed[1]);
+            }
+            
+            // check if available, otherwise drop
+            if(available.size() == 0) continue;
+            
+            Integer assignedServer = available.ceiling(i % k);
+            // handle edge case for ceiling to go back to 1st server
+            if(assignedServer == null) {
+                assignedServer = available.first();
+            }
+            
+            // increase count
+            // remove from available and add to busy
+            count[assignedServer]++;
+            available.remove(assignedServer);
+            busy.offer(new int[] { end, assignedServer});
+        }
+        
+        return allMaxInArray(count);
+    }
+    
+    public List<Integer> allMaxInArray(int[] count) {
+        int max = 0;
+        for (int i = 0; i < count.length; i++) {
+            max = Math.max(max, count[i]);
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < count.length; i++) {
+            if (count[i] == max) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+}

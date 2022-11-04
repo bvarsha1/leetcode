@@ -1,0 +1,53 @@
+*2101. Detonate the Maximum Bombs
+
+Solution :
+class Solution {
+    HashMap<Integer, ArrayList<Integer>> bombRange = new HashMap();
+    public int maximumDetonation(int[][] bombs) {
+        if(bombs.length <= 1) return bombs.length;
+        
+        addToGraph(bombs);
+        
+        int ans = 0;
+        for(int i = 0; i < bombs.length; i++) {
+            boolean[] visited = new boolean[bombs.length];
+            int count = dfs(i, visited);
+            ans = Math.max(count, ans);
+        }
+        return ans;
+    }
+    
+    public int dfs(int i, boolean[] visited) {
+        int count = 0;
+        visited[i] = true;
+        if(bombRange.containsKey(i)) {
+            for(int nbr : bombRange.get(i)) {
+                if(!visited[nbr])
+                    count += dfs(nbr, visited);
+            }
+        }
+        return 1 + count;
+    }
+    
+    public void addToGraph(int[][] bombs) {
+        for(int i = 0; i < bombs.length; i++) {
+            for(int j = i + 1; j < bombs.length; j++) {
+                double dist = getDistance(bombs[i], bombs[j]);
+                if(dist <= bombs[i][2]) {
+                    ArrayList<Integer> nbr = bombRange.getOrDefault(i, new ArrayList());
+                    nbr.add(j);
+                    bombRange.put(i, nbr);
+                }
+                if(dist <= bombs[j][2]) {
+                    ArrayList<Integer> nbr = bombRange.getOrDefault(j, new ArrayList());
+                    nbr.add(i);
+                    bombRange.put(j, nbr);
+                }
+            }
+        }
+    }
+    
+    public double getDistance(int[] bomb1, int[] bomb2) {
+        return Math.sqrt(Math.pow(bomb1[0] - bomb2[0], 2) + Math.pow(bomb1[1] - bomb2[1], 2));
+    }
+}

@@ -1,0 +1,71 @@
+*562. Longest Line of Consecutive One in Matrix
+
+Solution : 
+class Solution {
+    public int longestLine3d(int[][] mat) {
+        int m = mat.length;
+        int n = mat[0].length;
+        
+        int[][][] dp = new int[m][n][4]; // to store 4 possible routes dp values
+        
+        int longest = 0;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(mat[i][j] != 1) continue;
+                // check for the row, where columns changes
+                dp[i][j][0] = (j > 0) ? dp[i][j - 1][0] + 1 : 1;
+                // check for the col, where row changes
+                dp[i][j][1] = (i > 0) ? dp[i - 1][j][1] + 1 : 1;
+                // check for diagonal, where both row and col dec/inc same way
+                dp[i][j][2] = (i > 0 && j > 0) ? dp[i - 1][j - 1][2] + 1 : 1;
+                // check for anti-diagonal, where if row inc, col dec and vice versa
+                dp[i][j][3] = (i > 0 && j < n - 1) ? dp[i - 1][j + 1][3] + 1 : 1;
+                // calculate longest
+                longest = Math.max(longest, Math.max(
+                        Math.max(dp[i][j][0], dp[i][j][1]),
+                        Math.max(dp[i][j][2], dp[i][j][3])
+                    ));
+            }
+        }
+        
+        return longest;
+    }
+    
+    public int longestLine(int[][] mat) {
+        int m = mat.length;
+        int n = mat[0].length;
+        
+        int[][] dp = new int[n][4]; // we store 4 route values for each row
+        
+        int longest = 0;
+        for(int i = 0; i < m; i++) {
+            int old = 0;
+            for(int j = 0; j < n; j++) {
+                if(mat[i][j] == 1) {
+                    // check for the row, where columns changes
+                    dp[j][0] = (j > 0) ? dp[j - 1][0] + 1 : 1;
+                    // check for the col, where row changes
+                    // dp[i] represents the prev row only
+                    dp[j][1] = (i > 0) ? dp[j][1] + 1 : 1;
+                    // check for diagonal, where both row and col dec/inc same way
+                    // dp[i] represents prev row, but for prev col we need to track
+                    int prev = dp[j][2]; // as this value is overwritten
+                    dp[j][2] = (i > 0 && j > 0) ? old + 1 : 1;
+                    old = prev;
+                    // check for anti-diagonal, where if row inc, col dec and vice versa
+                    dp[j][3] = (i > 0 && j < n - 1) ? dp[j + 1][3] + 1 : 1;
+                    // calculate longest
+                    longest = Math.max(longest, Math.max(
+                            Math.max(dp[j][0], dp[j][1]),
+                            Math.max(dp[j][2], dp[j][3])
+                        ));
+                } else {
+                    old = dp[j][2];
+                    dp[j][0] = dp[j][1] = dp[j][2] = dp[j][3] = 0;
+                }
+            }
+        }
+        
+        return longest;
+    }
+}

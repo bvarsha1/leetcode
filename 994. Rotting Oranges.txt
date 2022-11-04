@@ -1,0 +1,59 @@
+*994. Rotting Oranges
+
+Solution : 
+
+class Solution {
+    int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    public int orangesRotting(int[][] grid) {
+        // bfs - number of levels traversed while going bfs
+        int fresh = 0;
+        int m = grid.length;
+        int n = grid[0].length;
+        Queue<GridMark> q = new ArrayDeque<>();
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 2)
+                    q.offer(new GridMark(i, j));
+                if(grid[i][j] == 1)
+                    fresh++;
+            }
+        }
+        
+        int minCount = 0;
+        while(!q.isEmpty()) {
+            int itemsInLevel = q.size();
+            if(fresh == 0) return minCount;
+            for(int i = 0; i < itemsInLevel; i++) {
+                GridMark curr = q.poll();
+                // traverse to neighbors
+
+                for(int[] dir : dirs) {
+                    int nextRow = curr.row + dir[0];
+                    int nextCol = curr.col + dir[1];
+                    
+                    if(nextRow < 0 || nextRow >= m || nextCol < 0 || nextCol >= n || grid[nextRow][nextCol] == 0)
+                        continue;
+                    
+                    if(grid[nextRow][nextCol] == 1) {
+                        grid[nextRow][nextCol] = 2;
+                        fresh--;
+                        q.offer(new GridMark(nextRow, nextCol));
+                    }
+                }
+            }
+            minCount++;
+        }
+
+        return fresh == 0 ? minCount : -1;
+    }
+}
+
+class GridMark {
+    int row;
+    int col;
+    
+    public GridMark(int i, int j) {
+        row = i;
+        col = j;
+    }
+}

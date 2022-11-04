@@ -1,0 +1,35 @@
+*2188. Minimum Time to Finish the Race
+
+Solution :
+
+class Solution {
+    public int minimumFinishTime(int[][] tires, int changeTime, int numLaps) {
+        // 1 important thing to identify is when the current tires cannot be used any further...
+        int numTires = tires.length;
+
+        int[] sameTire = new int[numLaps + 1];
+        Arrays.fill(sameTire, Integer.MAX_VALUE);
+        // sameTire array tracks what is the min cost to complete lap i using same tire (any tire)
+        for(int[] tire : tires) {
+            int lapTime = tire[0];
+            int totalTime = lapTime;
+            sameTire[1] = Math.min(tire[0], sameTire[1]);
+            for(int lap = 2; lap <= numLaps; lap++) {
+                lapTime *= tire[1];
+                if(lapTime > changeTime + tire[0])
+                    break;
+                totalTime += lapTime;
+                sameTire[lap] = Math.min(sameTire[lap], totalTime);
+            }
+        }
+
+        // knapsack
+        for(int i = 1; i <= numLaps; i++) {
+            System.out.print(sameTire[i] + " ");
+            for(int j = 1; j < i; j++)
+                sameTire[i] = Math.min(sameTire[i], sameTire[j] + changeTime + sameTire[i - j]);
+        }
+        System.out.println();
+        return sameTire[numLaps];
+    }
+}

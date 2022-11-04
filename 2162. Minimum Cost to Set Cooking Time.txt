@@ -1,0 +1,53 @@
+*2162. Minimum Cost to Set Cooking Time
+
+Solution :
+
+class Solution {
+    public int minCostSetTime(int startAt, int moveCost, int pushCost, int targetSeconds) {
+        if(targetSeconds < 60)
+            return cost(startAt, moveCost, pushCost, 0, targetSeconds);
+        
+        int left = targetSeconds / 60, right = targetSeconds % 60;
+        // check again if left in bounds of 99
+        int cost1 = Integer.MAX_VALUE, cost2 = Integer.MAX_VALUE;
+        if(left <= 99)
+            cost1 = cost(startAt, moveCost, pushCost, left, right);
+        
+        // reducing 1 unit from min section and adding to seconds sections
+        left--;
+        right += 60;
+        // check now if right is in bounds of 99
+        if(right <= 99)
+            cost2 = cost(startAt, moveCost, pushCost, left, right);
+        
+        return Math.min(cost1, cost2);
+    }
+    
+    // O(1) operation - because there are only 4 digits to calculate cost for
+    public int cost(int startAt, int moveCost, int pushCost, int mins, int secs) {
+        // DEBUG - System.out.println(mins + " : " + secs);
+        int m1 = mins / 10, m2 = mins % 10;
+        int s1 = secs / 10, s2 = secs % 10;
+        
+        int now = startAt, cost = 0;
+        // check if zero
+        if(m1 != 0) {
+            cost += (now != m1) ? moveCost + pushCost : pushCost;
+            now = m1;
+        }
+        // this is to check for following zeros after non-zero previous digit
+        if(m1 != 0 || m2 != 0) {
+            cost += (now != m2) ? moveCost + pushCost : pushCost;
+            now = m2;
+        }
+        // this is to check for following zeros after non-zero previous digit
+        if(m1 != 0 || m2 != 0 || s1 != 0) {
+            cost += (now != s1) ? moveCost + pushCost : pushCost;
+            now = s1;
+        }
+        
+        cost += (now != s2) ? moveCost + pushCost : pushCost;
+        
+        return cost;
+    }
+}

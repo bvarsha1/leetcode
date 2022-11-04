@@ -1,0 +1,49 @@
+*975. Odd Even Jump
+
+Solution : 
+
+class Solution {
+    // maintain boolean dp arrays for odd/even respectively whether its a good index or not
+    boolean[] dpOdd;
+    boolean[] dpEven;
+    // Bottom-up dp approach
+    public int oddEvenJumps(int[] arr) {
+        // base case
+        if(arr.length <= 1) return arr.length;
+        int n = arr.length;
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        
+        dpOdd = new boolean[n];
+        dpEven = new boolean[n];
+        
+        // mark last elements as true for odd/even
+        dpOdd[n - 1] = true;
+        dpEven[n - 1] = true;
+
+        // put the last element, its index in map
+        // will only be inserted in the map if their dp values are calculated
+        map.put(arr[n - 1], n - 1);
+        //intialize result as 1 - the last element
+        int res = 1;
+        
+        // start from last, so the previous state (last index is base case) will always be calculated
+        for(int i = arr.length - 2; i >= 0; i--) {
+            // for odd step
+            Integer nextLarger = map.ceilingKey(arr[i]);
+            if(nextLarger != null)
+                dpOdd[i] = dpEven[map.get(nextLarger)];
+            
+            Integer nextSmaller = map.floorKey(arr[i]);
+            if(nextSmaller != null)
+                dpEven[i] = dpOdd[map.get(nextSmaller)];
+            
+            map.put(arr[i], i);
+            
+            //result can only be checked from odd step - as for good index you start with 1st step
+            res += dpOdd[i] ? 1 : 0;
+            
+        }
+        
+        return res;
+    }
+}

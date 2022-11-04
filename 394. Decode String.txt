@@ -1,0 +1,43 @@
+*394. Decode String
+
+Solution : 
+class Solution {
+    public String decodeString(String str) {
+        Stack<Character> s = new Stack();
+        
+        // push all elements until ']' is encountered
+        for(char ch : str.toCharArray()) {
+            if(ch != ']') {
+                s.push(ch);
+                continue;
+            }
+
+            // we've encountered ']'
+            StringBuilder sb = new StringBuilder();
+            while(s.peek() != '[')
+                sb.insert(0, s.pop());
+            
+            String decoded = sb.toString();
+            
+            // pop '['
+            s.pop();
+            int base = 1;
+            int num = 0;
+            while(!s.isEmpty() && Character.isDigit(s.peek())) {
+                num = num + (s.pop() - '0') * base;
+                base *= 10;
+            }
+            
+            String s1 = decoded.repeat(num);
+            for(char ch1 : s1.toCharArray())
+                s.push(ch1);
+        }
+        
+        char[] result = new char[s.size()];
+        for(int i = result.length - 1; i >= 0; i--) {
+            result[i] = s.pop();
+        }
+        
+        return new String(result);
+    }
+}

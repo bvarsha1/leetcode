@@ -1,0 +1,65 @@
+*759. Employee Free Time
+
+Solution : 
+
+/*
+// Definition for an Interval.
+class Interval {
+    public int start;
+    public int end;
+
+    public Interval() {}
+
+    public Interval(int _start, int _end) {
+        start = _start;
+        end = _end;
+    }
+};
+*/
+
+class Solution {
+    public List<Interval> employeeFreeTime(List<List<Interval>> schedule) {
+        // sort by start time of the first interval of the already sorted (and non-overlapping) employee schedule sheets
+        // PQ is defined with 2 indices (we take an array) - first index represents the employee index, second the interval
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            // we have a comparator
+            (a, b) -> schedule.get(a[0]).get(a[1]).start - schedule.get(b[0]).get(b[1]).start
+        );
+        
+        // intilize priority queue with first intervals of all employees
+        for(int i = 0; i < schedule.size(); i++) {
+            // the first index is employee index, second is the interval pointer
+            pq.offer(new int[]{i, 0});
+        }
+        
+        List<Interval> res = new ArrayList();
+        // keep track of the prev end time for testing for overlaps
+        // we get the end time of the first schedule at the head of the PQ
+        // but be careful not to poll the schedule yet
+        int prev = schedule.get(pq.peek()[0]).get(pq.peek()[1]).end;
+        
+        // do an interval by interval comparison and check for free times, ie. where there are no overlaps
+        while(!pq.isEmpty()) {
+            // poll the head of the PQ
+            int[] curr = pq.poll();
+            Interval i = schedule.get(curr[0]).get(curr[1]);
+            // check if no overlap
+            if(i.start > prev) { // this is exactly why we need to keep track of prev
+                // we would add this free time from prev to start of this interval to result
+                res.add(new Interval(prev, i.start));
+            }
+            
+            // move the prev to end of current interval
+            // edge case - where prev may still be larger than end of curr interval
+            prev = Math.max(prev, i.end);
+            
+            // check if there are more intervals in the employee's schedule list
+            // add right away, because we are going to move away from curr employee now
+            if(schedule.get(curr[0]).size() > curr[1] + 1) {
+                pq.offer( new int[] {curr[0], curr[1] + 1} );
+            }
+        }
+        
+        return res;
+    }
+}

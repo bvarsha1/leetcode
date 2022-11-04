@@ -1,0 +1,33 @@
+*Shortest Way to Form String
+
+Solution : 
+
+class Solution {
+    public int shortestWay(String source, String target) {
+        int subCount = 1; // subsequence count
+        boolean[] map = new boolean[26];
+
+        for(char ch : source.toCharArray())
+            map[ch - 'a'] = true;
+        
+        int i = 0, j = 0;
+        while(j < target.length()) {
+            if(source.charAt(i) == target.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                i++;
+                if(!map[target.charAt(j) - 'a'])
+                    return -1;
+            }
+            
+            // subsequence counter inc and source index reset
+            if(j != target.length() && i == source.length()) {
+                i = 0;
+                subCount++;
+            }
+        }
+        
+        return subCount;
+    }
+}

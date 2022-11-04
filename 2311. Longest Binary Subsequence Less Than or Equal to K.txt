@@ -1,0 +1,27 @@
+*2311. Longest Binary Subsequence Less Than or Equal to K
+
+Solution :
+
+class Solution {
+    public int longestSubsequence(String s, int k) {
+        // count the number of 0s
+        // then based off of the position of 1s check if <= 5; inc count
+        // return the count
+        int back = s.length() - 1;
+        int count = 0;
+        // be careful about the integer overflow
+        long onesValue = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(back - i) == '0')
+                count++;
+            else {
+                onesValue += (int) Math.pow(2, i);
+                if(onesValue <= k) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}

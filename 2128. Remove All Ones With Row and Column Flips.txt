@@ -1,0 +1,35 @@
+*2128. Remove All Ones With Row and Column Flips
+
+Solution :
+
+class Solution {
+    public boolean removeOnes(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+        
+        // on the first row, remove any ones if encountered
+        for(int i = 0; i < cols; i++) {
+            if(grid[0][i] == 1) {
+                for(int j = 0; j < rows; j++) {
+                    grid[j][i] = (grid[j][i] == 0) ? 1 : 0;
+                }
+            }
+        }
+        
+        // after those operation, if any of the other rows has both 0s and 1s
+        // then its impossible to find a solution
+        
+        for(int i = 1; i < rows; i++) {
+            int sum = 0;
+            for(int j = 0; j < cols; j++) {
+                sum += grid[i][j];
+            }
+            
+            if(sum != 0 && sum != cols) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}

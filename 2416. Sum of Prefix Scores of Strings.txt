@@ -1,0 +1,66 @@
+*2416. Sum of Prefix Scores of Strings
+
+Solution :
+
+class Solution {
+    public int[] sumPrefixScores(String[] words) {
+        Trie t = new Trie();
+        t.insert(words);
+        
+        int[] score = new int[words.length];
+        for(int i = 0; i < words.length; i++) {
+            score[i] = t.getPrefixSum(words[i]);
+        }
+        
+        return score;
+    }
+}
+
+class TrieNode {
+    char ch;
+    int counter; // number of times visited is the score of that prefix
+    HashMap<Character, TrieNode> map;
+    boolean isTerminal;
+    
+    public TrieNode(char c) {
+        ch = c;
+        counter = 0;
+        map = new HashMap();
+        isTerminal = false;
+    }
+}
+
+class Trie {
+    TrieNode root;
+    
+    public Trie() {
+        root = new TrieNode('\0');
+    }
+    
+    public void insert(String[] words) {
+        for(String word : words) {
+            TrieNode temp = root;
+            
+            for(char ch : word.toCharArray()) {
+                if(!temp.map.containsKey(ch))
+                    temp.map.put(ch, new TrieNode(ch));
+                
+                temp = temp.map.get(ch);
+                temp.counter += 1;
+            }
+            temp.isTerminal = true;
+        }
+    }
+    
+    public int getPrefixSum(String word) {
+        TrieNode temp = root;
+        int sum = 0;
+        for(char ch : word.toCharArray()) {
+            if(!temp.map.containsKey(ch)) return sum;
+            temp = temp.map.get(ch);
+            sum += temp.counter;
+        }
+        
+        return sum;
+    }
+}

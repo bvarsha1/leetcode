@@ -1,0 +1,33 @@
+*900. RLE Iterator
+
+Solution : 
+
+class RLEIterator {
+    long idx;
+    TreeMap<Long, Integer> encoded; // for binary search
+    public RLEIterator(int[] encoding) {
+        idx = 0;
+        encoded = new TreeMap();
+
+        long prev = 0;
+        for(int i = 0; i < encoding.length/2; i++) {
+            if(encoding[2 * i] == 0) continue;
+            encoded.put(prev + encoding[2 * i], encoding[2 * i + 1]);
+            prev += encoding[2 * i];
+            System.out.println(prev + " " + encoding[2 * i + 1]);
+        }
+    }
+    
+    public int next(int n) {
+        idx += n;
+        Long key = encoded.ceilingKey(idx);
+        
+        return (key == null ) ? -1 : encoded.get(key);
+    }
+}
+
+/**
+ * Your RLEIterator object will be instantiated and called as such:
+ * RLEIterator obj = new RLEIterator(encoding);
+ * int param_1 = obj.next(n);
+ */

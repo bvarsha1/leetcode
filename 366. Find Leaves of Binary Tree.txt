@@ -1,0 +1,43 @@
+*366. Find Leaves of Binary Tree
+
+Solution : 
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> findLeaves(TreeNode root) {
+        List<List<Integer>> result = new ArrayList();
+        dfs(root, result);
+        
+        return result;
+    }
+    
+    public int dfs(TreeNode root, List<List<Integer>> result) {
+        if(root == null) return -1;
+
+        int h1 = dfs(root.left, result);
+        int h2 = dfs(root.right, result);
+        
+        int curr = Math.max(h1, h2) + 1;
+        if(result.size() <= curr) {
+            result.add(new ArrayList());
+        }
+        
+        result.get(curr).add(root.val);
+
+        return curr;
+    }
+}

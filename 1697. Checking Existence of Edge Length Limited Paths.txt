@@ -1,0 +1,87 @@
+*1697. Checking Existence of Edge Length Limited Paths
+
+Solution : 
+
+class Solution {
+    public boolean[] distanceLimitedPathsExist(int n, int[][] edges, int[][] queries) {
+        // Brute force - to discover all the paths between the 2 nodes and determine if if each edge is less than limit - very inefficient
+        // Optimised - what if we can draw a graph considering edges strictly less than limit
+        //     Use Union-Find to contruct graph with condition, also because there is no directionality
+        
+        // union the vectices only if their edge < limit
+        // perform find to see if nodes are connected to one another
+        // Update - optimisation -
+        // Sort edges and sort queries - so we dont have tp create graph from start
+        Arrays.sort(edges, (a, b) -> a[2] - b[2]);
+        // make sure while sorting queries that their index is to be maintained
+        int[][] sortedQueries = new int[queries.length][4];
+        for(int i = 0; i < queries.length; i++) {
+            sortedQueries[i] = new int[]{queries[i][0], queries[i][1], queries[i][2], i};
+        }
+        Arrays.sort(sortedQueries, (a, b) -> a[2] - b[2]);
+        
+        UnionFind uf = new UnionFind(n);
+        boolean[] result = new boolean[queries.length];
+        int i = 0;
+        for(int[] query : sortedQueries) {
+            // Optimisation - use a while edge < query to limit number of iterations
+            while(i < edges.length && edges[i][2] < query[2]) {
+                uf.union(edges[i][0], edges[i][1]);
+                i++;
+            }
+            result[query[3]] = uf.areConnected(query[0], query[1]);
+        }
+        
+        return result;
+    }
+}
+
+class UnionFind {
+    private int[][] dSet;
+    
+    public UnionFind(int len) {
+        // we would store parent and rank in the 2nd dim.
+        dSet = new int[len][2];
+        // fill disjoint set with default values
+        for(int i = 0; i < len; i++){
+            dSet[i][0] = -1;
+            dSet[i][1] = 0;
+        }
+    }
+    
+    public int find(int a) {
+        if(dSet[a][0] == -1)
+            return a;
+        int temp = find(dSet[a][0]);
+        dSet[a][0] = temp;
+        return temp;
+    }
+    
+    public boolean union(int a, int b) {
+        int absP1 = find(a);
+        int absP2 = find(b);
+
+        if(absP1 == absP2) return false;
+        
+        if(dSet[absP1][1] < dSet[absP2][1]) {
+            // set parent of smaller set to abs parent of larger set
+            dSet[absP1][0] = absP2;
+            // rank doesnt change here
+        } else if(dSet[absP1][1] > dSet[absP2][1]) {
+            dSet[absP2][0] = absP1;
+        } else {
+            dSet[absP1][0] = absP2;
+            dSet[absP1][1] += 1;
+        }
+        return true;
+    }
+    
+    public boolean areConnected(int a, int b) {
+        int absP1 = find(a);
+        int absP2 = find(b);
+        
+        if(absP1 == absP2) return true;
+        
+        return false;
+    }
+}

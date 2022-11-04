@@ -1,0 +1,24 @@
+*2178. Maximum Split of Positive Even Integers
+
+Solution :
+
+class Solution {
+    public List<Long> maximumEvenSplit(long finalSum) {
+        // greedy + running sum??
+        List<Long> result = new ArrayList<>();
+        if(finalSum % 2 == 0){
+            long i = 2;
+            long runningSum = 0;
+            while(runningSum <= finalSum) {
+                runningSum += i;
+                result.add(i);
+                i += 2;
+            }
+            
+            if(runningSum > finalSum)
+                result.remove(runningSum - finalSum);
+        }
+        
+        return result;
+    }
+}

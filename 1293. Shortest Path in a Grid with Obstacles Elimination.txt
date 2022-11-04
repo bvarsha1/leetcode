@@ -1,0 +1,61 @@
+*1293. Shortest Path in a Grid with Obstacles Elimination
+
+Solution : 
+
+class Solution {
+    
+    public int shortestPath(int[][] grid, int k) {
+        int[][] dirs = {{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        // edge case
+        if( k >= m + n - 2)
+            return m + n - 2;
+        
+        // to track if the node is visited
+        boolean[][] seen = new boolean[m][n];
+        // min obstacles seen so far
+        int[][] minObstacles = new int[m][n];
+        
+        Queue<int[]> q = new ArrayDeque();
+        //q array dimensions - x, y, obstacleCount
+        q.offer(new int[]{0, 0, grid[0][0]});
+        minObstacles[0][0] = grid[0][0];
+        seen[0][0] = true;
+        
+        int moves = 0;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int[] curr = q.poll();
+                if(curr[0] == m - 1 && curr[1] == n - 1) return moves;
+                int currObstacleCount = curr[2];
+
+                for(int[] dir : dirs) {
+                    int nx = curr[0] + dir[0];
+                    int ny = curr[1] + dir[1];
+
+                    if(nx < 0 || nx >= m || ny < 0 || ny >= n) continue;
+
+                    int oldObstacleCount = minObstacles[nx][ny];
+                    int newObstacleCount = currObstacleCount + grid[nx][ny];
+
+                    // if not seen 
+                    // OR oldObstacleCount is greater than newObstacleCount
+                    // (in latter case seen doesnt matter, there is better path)
+                    // AND obstacleCount <= k
+                    // we add element to queue, update minObstacles
+                    if((!seen[nx][ny] || oldObstacleCount > newObstacleCount) && newObstacleCount <= k) {
+                        seen[nx][ny] = true;
+                        q.offer(new int[] {nx, ny, newObstacleCount});
+                        minObstacles[nx][ny] = newObstacleCount;
+                    }
+                }
+            }
+            moves++;
+        }
+        
+        return -1;
+    }
+}

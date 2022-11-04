@@ -1,0 +1,34 @@
+*Sort Integers by The Power Value
+
+Solution : 
+
+class Solution {
+    HashMap<Integer, Integer> cache = new HashMap();
+    
+    public int getPowerOfN(int n) {
+        // base case
+        if(n == 1) return 0;
+        
+        // recursive case
+        if(cache.containsKey(n)) return cache.get(n);
+        
+        if((n&1) == 0) {
+            cache.put(n, getPowerOfN(n/2) + 1);
+        } else {
+            cache.put(n, getPowerOfN(3 * n + 1) + 1);
+        }
+        
+        return cache.get(n);
+    }
+    
+    public int getKth(int lo, int hi, int k) {
+        Integer[] arr = new Integer[hi - lo + 1];
+        int idx = 0;
+        for(int n = lo; n <= hi; n++) {
+            arr[idx++] = n;
+        }
+        Arrays.sort(arr, (a, b) -> Integer.compare(getPowerOfN(a), getPowerOfN(b)) );
+        
+        return arr[k - 1];
+    }
+}

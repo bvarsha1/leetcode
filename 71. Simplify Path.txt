@@ -1,0 +1,29 @@
+*71-Simplify Path
+
+Solution : 
+
+class Solution {
+    public String simplifyPath(String path) {
+        
+        Stack<String> s = new Stack();
+        for(String currDir : path.split("/", -1)) {
+            if(currDir.isEmpty()) continue;
+            
+            if(currDir.equals("..")) {
+                if(!s.isEmpty())
+                    s.pop();
+            } else if(currDir.equals(".")) {
+                continue;
+            } else {
+                s.push(currDir);
+            }
+        }
+        
+        String result = "";
+        while(!s.isEmpty()) {
+            result = "/" + s.pop() + result;
+        }
+        
+        return (result.isEmpty()) ? "/" : result;
+    }
+}

@@ -1,0 +1,52 @@
+*1088. Confusing Number II
+
+Solution : 
+
+class Solution {
+    HashMap<Integer, Integer> confusingMap;
+    int res;
+    public Solution() {
+        this.res = 0;
+        confusingMap = new HashMap();
+        confusingMap.put(0, 0);
+        confusingMap.put(1, 1);
+        confusingMap.put(6, 9);
+        confusingMap.put(8, 8);
+        confusingMap.put(9, 6);
+    }
+    
+    public int confusingNumberII(int n) {
+        // if number is 0 consider numbers with 0 after
+        // if number equals its confused counterpart, repeating them will form the same confused number for them
+        
+        dfs(n, 0);
+        return res;
+    }
+    
+    public void dfs(int n, long curr) {
+        if(isConfusing(curr)) {
+            res++;
+        }
+        
+        // iterate over the map to add more confusing digits
+        for(Integer key : confusingMap.keySet()) {
+            long next = curr * 10 + key; // adds confusing digit
+            // check if number in bounds
+            if(next <= n && next != 0) {
+                dfs(n, next);
+            }
+        }
+    }
+    
+    public boolean isConfusing(long num) {
+        long input = num;
+        long output = 0;
+        
+        while(num > 0) {
+            output = output * 10 + confusingMap.get( (int) num % 10);
+            num = num/10;
+        }
+        
+        return output != input;
+    }
+}

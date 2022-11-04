@@ -1,0 +1,43 @@
+*1820. Maximum Number of Accepted Invitations
+
+Solution : 
+
+class Solution {
+    // https://www.geeksforgeeks.org/maximum-bipartite-matching/
+    int m, n;
+    int max = 0;
+    // since the matching is unique
+    // and m & n are small
+    // consists of girlId, boyId
+    HashMap<Integer, Integer> matched = new HashMap();
+    public int maximumInvitations(int[][] grid) {
+        // quite similar to N-queens? - backtracking and dfs?
+        // but keep track of the max count received so far
+        m = grid.length; // number of boys
+        n = grid[0].length; // number of girls
+        
+        for(int i = 0; i < m; i++) {
+            boolean [] asked = new boolean [n];
+            if(backtrack(grid, i, asked))
+                max++;
+        }
+        
+        return max;
+    }
+    
+    public boolean backtrack(int[][] grid, int b, boolean[] asked) {
+        for(int g = 0; g < n; g++) {
+            // check if boy can ask this girl
+            if(grid[b][g] == 1 && !asked[g]) {
+                asked[g] = true;
+                // check if girl already matched OR if we can change the match
+                if(!matched.containsKey(g) || backtrack(grid, matched.get(g), asked)) {
+                    matched.put(g, b);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}

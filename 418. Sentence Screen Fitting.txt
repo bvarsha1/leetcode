@@ -1,0 +1,30 @@
+*418. Sentence Screen Fitting
+
+Solution : 
+class Solution {
+    public int wordsTyping(String[] sentence, int rows, int cols) {
+        String fullSentence = String.join(" ", sentence) + " ";
+        System.out.println(fullSentence);
+        
+        int length = fullSentence.length();
+        int cursor = 0; // position on the screen, 0-indexed
+        
+        for(int i = 0; i < rows; i++) {
+            // increment cursor by full admissible column length
+            cursor += cols;
+            
+            // 2 cases -
+            //  i. we land on space
+            //  ii. we land on a character
+            if(fullSentence.charAt(cursor % length) == ' ') {
+                cursor++; // we move forward to next char
+            } else {
+                while(cursor > 0 && fullSentence.charAt( (cursor - 1) % length) != ' ') {
+                    cursor--; // we go to the most recent space character backwards
+                }
+            }
+        }
+        
+        return cursor/length;
+    }
+}

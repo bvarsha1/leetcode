@@ -1,0 +1,44 @@
+*Student Attendance Record II
+
+Solution : 
+
+class Solution {
+    // O(n) - as its going n levels deep - with each level having constant (at most 3) computations
+    final int M = 1000000007;
+    int[][][] cache;
+    public int checkRecord(int n) {
+        cache = new int[n + 1][3][2]; // n (1-indexed), possible states for consecutive Ls, possible states for having A
+        for(int[][] c1 : cache)
+            for(int[] c2 : c1)
+                Arrays.fill(c2,-1);
+        
+        return dfsMemo(n, 0, 0);
+    }
+    
+    public int dfsMemo(int n, int consecL, int hasA) { // 1 is true, 0 is false
+        // base case
+        if(n == 0) return 1;
+        
+        if(cache[n][consecL][hasA] == -1) {
+            // 3 rec conditions for A, L, P respectively
+            // when an P gets added, the consecL becomes 0
+            // condition to put P
+            int temp = dfsMemo(n - 1, 0, hasA) % M;
+
+            // condition to put an A
+            // when an A gets added, the consecL becomes 0
+            if(hasA == 0)
+                temp = (temp + dfsMemo(n - 1, 0, 1)) % M;
+
+            // condition to put an L
+            // consec L means ending in L
+            if(consecL < 2)
+                temp = (temp + dfsMemo(n - 1, consecL + 1, hasA)) % M;
+
+            // update cache
+            cache[n][consecL][hasA] =  temp;
+        }
+        
+        return cache[n][consecL][hasA];
+    }
+}

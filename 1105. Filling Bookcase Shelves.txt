@@ -1,0 +1,59 @@
+*1105. Filling Bookcase Shelves
+
+Solution : 
+
+class Solution {
+    public int minHeightShelves(int[][] books, int shelfWidth) {
+        
+        //return bottomUpDP(books, shelfWidth);
+        
+        return dfsMemo(books, shelfWidth, 0, 0, 0);
+    }
+    
+    int[][] cache = new int[1001][1001];
+    public int dfsMemo(int[][] books, int shelfWidth, int i, int shelfheight, int width) {
+        // base case
+        // all books are exhausted
+        if(i == books.length) return shelfheight;
+        
+        // recursive case
+        // initialise height to curr shelf height
+        int height = shelfheight;
+        // 2 possibilities - continue on shelf (with shelfWidth) || start with another shelf
+        
+        if(cache[i][width] != 0) return cache[i][width];
+        
+        // case 1 - add on new shelf
+        cache[i][width] = height + dfsMemo(books, shelfWidth, i + 1, books[i][1], books[i][0]);
+
+        // case 2 - continue on shelf
+        if(width + books[i][0] <= shelfWidth) {
+            // height remains as the height of longest book
+            cache[i][width] = Math.min(cache[i][width], dfsMemo(books, shelfWidth, i + 1, Math.max(shelfheight, books[i][1]), width + books[i][0]));
+        }
+        
+        return cache[i][width];
+    }
+    
+    public int bottomUpDP(int[][] books, int shelfWidth) {
+        int n = books.length;
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0; // no height incurred from placing no book :)
+        
+        for(int i = 1; i <= n; i++) {
+            // traverse all past states
+            int w = 0, h = 0;
+            for(int j = i; j > 0; j--) {
+                if(w + books[j - 1][0] > shelfWidth) break;
+                w += books[j - 1][0];
+                h = Math.max(h, books[j - 1][1]); // finding the max height of the shelf
+                
+                // by default first it tries to place in new shelf, then minimizes answer by combining books
+                dp[i] = Math.min(dp[i], dp[j - 1] + h);
+            }
+        }
+        
+        return dp[n];
+    }
+}

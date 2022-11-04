@@ -1,0 +1,91 @@
+*2018. Check if Word Can Be Placed In Crossword
+
+Solution : 
+
+class Solution {
+    public boolean placeWordInCrossword(char[][] board, String word) {
+        Trie t = new Trie();
+        t.insertPatternsFromBoard(board);
+
+        StringBuilder sb = new StringBuilder(word);  
+        String reversedWord = sb.reverse().toString(); 
+
+        return t.canInsertWord(word) || t.canInsertWord(reversedWord);
+    }
+}
+
+class TrieNode {
+    char ch;
+    HashMap<Character, TrieNode> map;
+    boolean isTerminal;
+    
+    public TrieNode(char ch) {
+        this.ch = ch;
+        map = new HashMap();
+        isTerminal = false;
+    }
+}
+
+class Trie {
+    TrieNode root = new TrieNode('\0');
+    
+    public void insertPatternsFromBoard(char[][] board) {
+        String curr = "";
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == '#') {
+                    insert(curr);
+                    curr = "";
+                }
+                else {
+                    curr += (board[i][j] == ' ') ? '*' : board[i][j];
+                }
+            }
+            insert(curr);
+            curr = "";   
+        }
+        
+        // Insert all vertical strings
+        for (int i = 0; i < board[0].length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[j][i] == '#') {
+                    insert(curr);
+                    curr = "";
+                }
+                else {
+                    curr += (board[j][i] == ' ') ? '*' : board[j][i];;
+                }
+            }
+            insert(curr);
+            curr = "";      
+        }
+    }
+
+    public void insert(String pattern) {
+        if(pattern == "" || pattern == null) return;
+        TrieNode temp = root;
+        
+        for(char ch : pattern.toCharArray()) {
+            if(!temp.map.containsKey(ch)) {
+                temp.map.put(ch, new TrieNode(ch));
+            }
+            temp = temp.map.get(ch);
+        }
+        temp.isTerminal = true;
+    }
+    
+    public boolean canInsertWord(String word) {
+        return helper(word, 0, root);
+    }
+    
+    public boolean helper(String key, int i, TrieNode curr) {
+        if (curr == null)
+            return false;
+
+        if (i == key.length())
+            return curr.isTerminal;
+
+        char c = key.charAt(i);
+        return helper(key, i + 1, curr.map.get(c)) || helper(key, i + 1, curr.map.get('*'));
+    }
+}

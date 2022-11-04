@@ -1,0 +1,46 @@
+*843. Guess the Word
+
+Solution : 
+
+/**
+ * // This is the Master's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * interface Master {
+ *     public int guess(String word) {}
+ * }
+ */
+class Solution {
+    public void findSecretWord(String[] words, Master master) {
+        Random r = new Random();
+        
+        // initialize the list of candidates
+        List<String> candidates = new ArrayList<String>();
+        candidates.addAll(Arrays.asList(words));
+        
+        int i = 1;
+        while(!candidates.isEmpty()) {
+            String guess = candidates.remove( r.nextInt(candidates.size()) );
+            int score = master.guess(guess);
+            
+            if(score == 6) return;
+            
+            List<String> tempList = new LinkedList();
+            for(String other : candidates) {
+                if(score == getMatches(guess, other))
+                    tempList.add(other);
+            }
+            
+            candidates = tempList;
+        }
+    }
+    
+    public int getMatches(String word, String other) {
+        int matches = 0;
+        for(int i = 0; i < 6; i++) {
+            if(word.charAt(i) == other.charAt(i))
+                matches++;
+        }
+        
+        return matches;
+    }
+}
