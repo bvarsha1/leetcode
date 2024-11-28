@@ -1,0 +1,30 @@
+// 3. Longest Substring Without Repeating Characters
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        // contant lookup, constant space because 26 characters
+        HashMap<Character, Integer> charExists = new HashMap<>();
+
+        int i = 0, j = 0;
+        int maxLen = 0;
+        int currLen = 0;
+        while(j < s.length()) {
+            char ch = s.charAt(j);
+
+            // contraction
+            if(charExists.containsKey(ch) && charExists.get(ch) >= i) {
+                i = charExists.get(ch) + 1;
+                currLen = j - i;
+            }
+
+            // expansion (happens in every iteration - naturally)
+            charExists.put(ch, j);
+            currLen++;
+            j++;
+
+            maxLen = Math.max(maxLen, currLen);
+        }
+
+        return maxLen;
+    }
+}

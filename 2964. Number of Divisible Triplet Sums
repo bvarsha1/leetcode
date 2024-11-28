@@ -1,0 +1,25 @@
+// 2964. Number of Divisible Triplet Sums
+
+class Solution {
+    public int divisibleTripletCount(int[] nums, int d) {
+        int n = nums.length;
+        int result = 0;
+
+        for (int L = 0; L < n - 2; L++) {
+            int[] remainderMap = new int[d];
+
+            for (int R = L + 1; R < n; R++) {
+                // Calculate the required remainder for the third element
+                int requiredRemainder = (d - (nums[L] + nums[R]) % d) % d;
+
+                // Count valid third elements
+                result += remainderMap[requiredRemainder];
+
+                // Update the map with the current element's remainder
+                remainderMap[nums[R] % d]++;
+            }
+        }
+
+        return result;
+    }
+}

@@ -1,0 +1,17 @@
+// 1710. Maximum Units on a Truck
+
+class Solution {
+    public int maximumUnits(int[][] boxTypes, int truckSize) {
+        Arrays.sort(boxTypes, (int[] b1, int[] b2) -> Integer.compare(b2[1], b1[1]));
+
+        int totalUnits = 0;
+        for(int[] boxType : boxTypes) {
+            int boxesPlaced = Math.min(truckSize, boxType[0]);
+            totalUnits += boxesPlaced * boxType[1];
+            truckSize -= boxesPlaced;
+            if(truckSize == 0) break;
+        }
+
+        return totalUnits;
+    }
+}

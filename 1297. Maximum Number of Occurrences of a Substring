@@ -1,0 +1,56 @@
+// 1297. Maximum Number of Occurrences of a Substring
+
+class Solution {
+    public int maxFreq(String s, int maxLetters, int minSize, int maxSize) {
+        int maxFreq = 0;
+        // this will run a max of 26 times (so, constant!)
+        for(int size = minSize; size <= minSize; size++) {
+            maxFreq = Math.max(maxFreq, maxFreqForSize(s, maxLetters, size));
+        }
+
+        return maxFreq;
+    }
+
+    public int maxFreqForSize(String s, int maxLetters, int size) {
+        // Stores the substring frequency to track the max frequency of the substring
+        HashMap<String, Integer> substringCount = new HashMap<>();
+        // Stores the character frequency in the current substring
+        char[] charCount = new char[26];
+
+        // Helper variables
+        int uniqueChars = 0;
+        int maxFreqForSize = 0;
+
+        // sliding window
+        int i = 0;
+        for(int j = 0; j < s.length(); j++) {
+            char ch = s.charAt(j);
+            // expansion
+            charCount[ch - 'a']++;
+            //charCount.put(ch, charCount.getOrDefault(ch, 0) + 1);
+            if(charCount[ch - 'a'] == 1) // first occurence
+                uniqueChars++;
+
+            // contraction - happens when size of substring surpasses the size given
+            while(j - i + 1 > size) {
+                // remove char at i
+                char firstCh = s.charAt(i);
+                charCount[firstCh - 'a']--;
+                //charCount.put(firstCh, charCount.get(firstCh) - 1);
+                if(charCount[firstCh - 'a'] == 0) {
+                    // reduce unique char count as char is removed
+                    uniqueChars--;
+                }
+                i++;
+            }
+
+            // after max contraction - check if window is valid and store it
+            if(j - i + 1 == size && uniqueChars <= maxLetters) {
+                String substr = s.substring(i, j + 1);
+                substringCount.put(substr, substringCount.getOrDefault(substr, 0) + 1);
+                maxFreqForSize = Math.max(maxFreqForSize, substringCount.get(substr));
+            }
+        }
+        return maxFreqForSize;
+    }
+}

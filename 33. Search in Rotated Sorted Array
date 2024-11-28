@@ -1,0 +1,33 @@
+// 33. Search in Rotated Sorted Array
+
+class Solution {
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        
+        while(left <= right) {
+            int mid = (left + right)/2;
+            if(nums[mid] == target) {
+                return mid;
+            }
+
+            // find which part is sorted
+            if(nums[left] <= nums[mid]) {
+                if(nums[left] <= target && target < nums[mid]) {
+                    // target lies in left
+                    right = mid - 1;
+                } else {
+                    // target lies in right
+                    left = mid + 1;
+                }
+            } else {
+                if(nums[mid] < target && target <= nums[right]) {
+                    // target lies in left
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+}
