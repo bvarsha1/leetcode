@@ -1,0 +1,53 @@
+// 1326. Minimum Number of Taps to Open to Water a Garden
+
+class Solution {
+    public int minTapsDP(int n, int[] ranges) {
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+
+        // base case - dp[i] stores the min number of taps to water area i
+        dp[0] = 0; // as this is 0 area
+
+        for(int i = 0; i <= n; i++) {
+            int tapStart = Math.max(0, i - ranges[i]);
+            int tapEnd = Math.min(n, i + ranges[i]);
+            for(int j = tapStart; j <= tapEnd; j++) {
+                if(dp[j] != Integer.MAX_VALUE) {
+                    dp[tapEnd] = Math.min(dp[tapEnd], dp[j] + 1);
+                }
+            }
+        }
+
+        return (dp[n] == Integer.MAX_VALUE) ? -1 : dp[n];
+    }
+
+    public int minTaps(int n, int[] ranges) {
+        int[] maxReach = new int[n + 1];
+
+        for(int i = 0; i <= n; i++) {
+            int left = Math.max(0, i - ranges[i]);
+            int right = Math.min(n, i + ranges[i]);
+            // maxReach[left] may be recalculated
+            // we are picking max value
+            maxReach[left] = Math.max(maxReach[left], right);
+        }
+
+        int taps = 0;
+        int l = 0, r = 0;
+
+        // garden length is n so we must reach n
+        while(r < n) {
+            int farthest = 0;
+            for(int i = l; i <= r; i++) {
+                farthest = Math.max(farthest, maxReach[i]);
+            }
+            if (farthest <= r) {
+                return -1; // Cannot reach further, return -1
+            }
+            l = r + 1;
+            r = farthest;
+            taps++;
+        }
+        return taps;
+    }
+}

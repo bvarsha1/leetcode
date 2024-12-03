@@ -1,0 +1,45 @@
+// 636. Exclusive Time of Functions
+
+class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        int[] ans = new int[n];
+        Stack<Log> s = new Stack<>();
+        int lastStart = 0;
+        for(String log : logs) {
+            String[] logArr  = log.split(":");
+            Log l = new Log(logArr[0], logArr[1], logArr[2]);
+            if(l.isStart) {
+                if(!s.isEmpty()) // check if stack not empty
+                    // we will record the time for which previously inserted call ran
+                    ans[s.peek().id] += l.timestamp - lastStart;
+                s.push(l);
+                // set the lastStart as the timestamp of current call
+                // as its the start of the call
+                lastStart = l.timestamp;
+            } else {
+                // we record the popped call's time
+                ans[s.pop().id] += l.timestamp - lastStart + 1;
+                // set lastStart to the timestamp the call ends, that is, time + 1
+                lastStart = l.timestamp + 1;
+            }
+        }
+
+        return ans;
+    }
+
+    class Log {
+        int id;
+        boolean isStart;
+        int timestamp;
+
+        public Log(String id, String action, String timestamp) {
+            this.id = Integer.parseInt(id);
+            this.isStart = action.equals("start") ? true : false;
+            this.timestamp = Integer.parseInt(timestamp);
+        }
+
+        public String toString() {
+            return ("LogID: " + this.id + "; Start: " + this.isStart + "; Timestamp: " + this.timestamp);
+        }
+    }
+}
