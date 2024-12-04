@@ -1,0 +1,20 @@
+// 255. Verify Preorder Sequence in Binary Search Tree
+
+class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        int minLimit = Integer.MIN_VALUE;
+        Stack<Integer> s = new Stack<>();
+
+        for(int num : preorder) {
+            while(!s.isEmpty() && s.peek() < num) {
+                minLimit = s.pop();
+            }
+
+            if(num < minLimit) return false;
+
+            s.push(num);
+        }
+
+        return true;
+    }
+}
