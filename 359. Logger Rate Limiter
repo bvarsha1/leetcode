@@ -1,0 +1,27 @@
+// 359. Logger Rate Limiter
+
+class Logger {
+
+    HashMap<String, Integer> log;
+    public Logger() {
+        log = new HashMap<>();
+    }
+    
+    public boolean shouldPrintMessage(int timestamp, String message) {
+        if(log.containsKey(message)) {
+            int lastPrintedTS = log.get(message);
+            if(lastPrintedTS + 10 > timestamp) {
+                return false;
+            }
+        }
+
+        log.put(message, timestamp);
+        return true;
+    }
+}
+
+/**
+ * Your Logger object will be instantiated and called as such:
+ * Logger obj = new Logger();
+ * boolean param_1 = obj.shouldPrintMessage(timestamp,message);
+ */

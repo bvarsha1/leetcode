@@ -1,0 +1,105 @@
+// 432. All O`one Data Structure
+
+class AllOne {
+    class Node {
+        HashSet<String> strings;
+        int freq;
+        Node next, prev;
+        
+        public Node() {
+            strings = new HashSet<>();
+            next = prev = null;
+        }
+    }
+
+    // have dummy head and tail nodes
+    Node head, tail;
+    HashMap<String, Node> stringMap;
+
+    public Node getNewNode(String s, int freq) {
+        Node node = new Node();
+        node.strings.add(s);
+        node.freq = freq;
+        node.prev = node.next = null;
+        return node;
+    }
+
+    public void removeNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        node = null;
+    }
+
+    public void insertAtRight(Node curr, String s, int f) {
+        Node node = getNewNode(s, f);
+        node.next = curr.next;
+        node.prev = curr;
+        curr.next = node;
+        node.next.prev = node;
+    }
+
+    public AllOne() {
+        head = getNewNode("", -10);
+        tail = getNewNode("", -10);
+        head.next = tail;
+        tail.prev = head;
+        stringMap = new HashMap<>();
+    }
+    
+    public void inc(String key) {
+        if(stringMap.containsKey(key)) {
+            Node curr = stringMap.get(key);
+            curr.strings.remove(key);
+            if(curr.freq + 1 == curr.next.freq) {
+                curr.next.strings.add(key);
+            } else {
+                insertAtRight(curr, key, curr.freq + 1);
+            }
+            stringMap.put(key, curr.next);
+            if(curr.strings.isEmpty()) removeNode(curr);
+        } else {
+            if(head.next.freq == 1) {
+                head.next.strings.add(key);
+            } else {
+                insertAtRight(head, key, 1);
+            }
+            stringMap.put(key, head.next);
+        }
+    }
+    
+    public void dec(String key) {
+        Node curr = stringMap.get(key);
+        curr.strings.remove(key);
+        if(curr.freq == 1) {
+            stringMap.remove(key);
+        } else {
+            if(curr.prev.freq == curr.freq - 1) {
+                curr.prev.strings.add(key);
+            } else {
+                insertAtRight(curr.prev, key, curr.freq - 1);
+            }
+            stringMap.put(key, curr.prev);
+        }
+
+        if(curr.strings.isEmpty()) removeNode(curr);
+    }
+    
+    public String getMaxKey() {
+        if(tail.prev == head) return "";
+        return tail.prev.strings.iterator().next();
+    }
+    
+    public String getMinKey() {
+        if(head.next == tail) return "";
+        return head.next.strings.iterator().next();
+    }
+}
+
+/**
+ * Your AllOne object will be instantiated and called as such:
+ * AllOne obj = new AllOne();
+ * obj.inc(key);
+ * obj.dec(key);
+ * String param_3 = obj.getMaxKey();
+ * String param_4 = obj.getMinKey();
+ */

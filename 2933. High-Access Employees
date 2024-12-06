@@ -1,0 +1,30 @@
+// 2933. High-Access Employees
+
+class Solution {
+    public List<String> findHighAccessEmployees(List<List<String>> access_times) {
+        HashMap<String, List<Integer>> map = new HashMap<>();
+        for(List<String> access : access_times) {
+            String emp = access.get(0);
+            Integer time = Integer.parseInt(access.get(1));
+            List<Integer> times = map.getOrDefault(emp, new ArrayList<Integer>());
+            times.add(time);
+            map.put(emp, times);
+        }
+
+        List<String> ans = new ArrayList<>();
+        for(String emp : map.keySet()) {
+            List<Integer> times = map.get(emp);
+            if(times.size() < 3) continue;
+
+            Collections.sort(times);
+            for(int i = 0; i < times.size() - 2; i++) {
+                // gracefully check sorted times that 2 access times are <= 99 
+                //(it doesnt matter to compare in 60 secs range)
+                if(times.get(i + 2) - times.get(i) <= 99 && !ans.contains(emp))
+                    ans.add(emp);
+            }
+        }
+
+        return ans;
+    }
+}

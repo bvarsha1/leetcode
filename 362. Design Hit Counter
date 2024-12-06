@@ -1,0 +1,36 @@
+// 362. Design Hit Counter
+
+class HitCounter {
+    int[] times;
+    int[] hits;
+    public HitCounter() {
+        times = new int[300];
+        hits = new int[300];
+    }
+    
+    public void hit(int timestamp) {
+        int i = timestamp % 300;
+        if(times[i] != timestamp) {
+            times[i] = timestamp; // reset timestamp
+            hits[i] = 1; // reset hits to 1
+        } else {
+            hits[i]++; // increment hits
+        }
+    }
+    
+    public int getHits(int timestamp) {
+        int total = 0;
+        for(int i = 0; i < 300; i++) {
+            if(timestamp - times[i] < 300)
+                total += hits[i];
+        }
+        return total;
+    }
+}
+
+/**
+ * Your HitCounter object will be instantiated and called as such:
+ * HitCounter obj = new HitCounter();
+ * obj.hit(timestamp);
+ * int param_2 = obj.getHits(timestamp);
+ */

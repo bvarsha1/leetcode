@@ -1,0 +1,22 @@
+// 2598. Smallest Missing Non-negative Integer After Operations
+
+class Solution {
+    public int findSmallestInteger(int[] nums, int value) {
+        int[] map = new int[value];
+        for(int num : nums) {
+            int key = num % value;
+            if(key < 0) {
+                key = value + key;
+            }
+            map[key]++;
+        }
+
+        int ans = 0;
+        while(true) {
+            if(map[ans%value] == 0) return ans;
+            // we need to count the how many keys we can turn into each of these small Integers
+            map[ans%value]--;
+            ans++;
+        }
+    }
+}

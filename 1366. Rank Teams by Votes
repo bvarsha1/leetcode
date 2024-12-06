@@ -1,0 +1,43 @@
+// 1366. Rank Teams by Votes
+
+class Solution {
+    public String rankTeams(String[] votes) {
+        // Base case: If only one vote, return it as is
+        if (votes.length == 1) return votes[0];
+
+        // Step 1: Create a map to store the votes in each rank position for each team
+        Map<Character, int[]> teamScores = new HashMap<>();
+        
+        for (String vote : votes) {
+            for (int i = 0; i < vote.length(); i++) {
+                char team = vote.charAt(i);
+                // If the team has not been added yet, initialize an array of zeros for the number of rankings
+                teamScores.putIfAbsent(team, new int[vote.length()]);
+                teamScores.get(team)[i]++;  // Increment the vote for this team at rank i
+            }
+        }
+
+        // Step 2: Create a list of teams (characters) to sort
+        List<Character> teams = new ArrayList<>(teamScores.keySet());
+
+        // Step 3: Sort the teams using a custom comparator:
+        teams.sort((team1, team2) -> {
+            // Compare by each ranking position, from highest to lowest
+            for (int i = 0; i < votes[0].length(); i++) {
+                if (teamScores.get(team1)[i] != teamScores.get(team2)[i]) {
+                    return teamScores.get(team2)[i] - teamScores.get(team1)[i];  // Sort in descending order
+                }
+            }
+            // If all positions are tied, sort alphabetically
+            return team1 - team2;  // Lexicographical comparison of team names
+        });
+
+        // Step 4: Build the result string by appending all teams in the sorted order
+        StringBuilder sb = new StringBuilder();
+        for (char team : teams) {
+            sb.append(team);
+        }
+        
+        return sb.toString();
+    }
+}

@@ -1,0 +1,54 @@
+// 2034. Stock Price Fluctuation 
+
+class StockPrice {
+    int latestTime;
+    HashMap<Integer, Integer> timeToPriceMap;
+    PriorityQueue<int[]> minHeap, maxHeap;
+
+    public StockPrice() {
+        latestTime = 0;
+        timeToPriceMap = new HashMap<>();
+        minHeap = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+        maxHeap = new PriorityQueue<>((a, b) -> b[1] - a[1]);
+    }
+    
+    public void update(int timestamp, int price) {
+        latestTime = Math.max(latestTime, timestamp);
+        timeToPriceMap.put(timestamp, price);
+        minHeap.add(new int[]{ timestamp, price });
+        maxHeap.add(new int[]{ timestamp, price });
+    }
+    
+    public int current() {
+        return timeToPriceMap.get(latestTime);
+    }
+    
+    public int maximum() {
+        int[] max = maxHeap.peek();
+        while(max[1] != timeToPriceMap.get(max[0])) {
+            maxHeap.poll();
+            max = maxHeap.peek();
+        }
+
+        return max[1];
+    }
+    
+    public int minimum() {
+        int[] min = minHeap.peek();
+        while(min[1] != timeToPriceMap.get(min[0])) {
+            minHeap.poll();
+            min = minHeap.peek();
+        }
+
+        return min[1];
+    }
+}
+
+/**
+ * Your StockPrice object will be instantiated and called as such:
+ * StockPrice obj = new StockPrice();
+ * obj.update(timestamp,price);
+ * int param_2 = obj.current();
+ * int param_3 = obj.maximum();
+ * int param_4 = obj.minimum();
+ */
