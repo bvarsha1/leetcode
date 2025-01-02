@@ -1,0 +1,43 @@
+// 4. Median of Two Sorted Arrays
+
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+
+        if(m <= n) {
+            return findMedianHelper(nums1, m, nums2, n);
+        }
+        return findMedianHelper(nums2, n, nums1, m);
+    }
+
+    public double findMedianHelper(int[] nums1, int m, int[] nums2, int n) {
+        int low = 0, high = m;
+        while(low <= high) {
+            int pX = (low + high) / 2;
+            int pY = (m + n + 1) / 2 - pX;
+
+            int maxLX = (pX == 0) ? Integer.MIN_VALUE : nums1[pX - 1];
+            int minRX = (pX == m) ? Integer.MAX_VALUE : nums1[pX];
+
+            int maxLY = (pY == 0) ? Integer.MIN_VALUE : nums2[pY - 1];
+            int minRY = (pY == n) ? Integer.MAX_VALUE : nums2[pY];
+
+            if(maxLX <= minRY && maxLY <= minRX) {
+                if((m + n) % 2 == 0)
+                    return (
+                            Double.valueOf(Math.max(maxLX, maxLY)) + 
+                            Double.valueOf(Math.min(minRX, minRY))
+                        ) / 2;
+                else
+                    return Double.valueOf(Math.max(maxLX, maxLY));
+            } else if(maxLX > minRY) {
+                high = pX - 1;
+            } else {
+                low = pX + 1;
+            }
+        }
+
+        return Double.valueOf(0);
+    }
+}

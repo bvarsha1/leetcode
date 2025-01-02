@@ -1,0 +1,16 @@
+// 1526. Minimum Number of Increments on Subarrays to Form a Target Array
+
+class Solution {
+    public int minNumberOperations(int[] target) {
+        int prev = 0, res = 0;
+
+        for(int e : target) {
+            if(e > prev) {
+                res += e - prev;
+            }
+            prev = e;
+        }
+
+        return res;
+    }
+}
