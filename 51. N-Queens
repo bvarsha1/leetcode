@@ -1,0 +1,59 @@
+** 51. N-Queens
+
+class Solution {
+    String empty = ".";
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> ans = new ArrayList<>(4);
+        List<String> board = new ArrayList<>();
+        for(int i = 0; i < n; i++) board.add(empty.repeat(n));
+        backtrack(n, 0, ans, board);
+        return ans;
+    }
+
+    public void backtrack(int n, int i, List<List<String>> ans, List<String> curr) {
+        // base case
+        if(i == n) {
+            ans.add(new ArrayList<String>(curr));
+        }
+
+        //ans.add(i, new ArrayList<String>());
+
+        // rec case
+        StringBuilder row = new StringBuilder(empty.repeat(n));
+        for(int j = 0; j < n; j++) {
+            if(canPlace(curr, n, i, j)) {
+                row.setCharAt(j, 'Q');
+                curr.set(i, row.toString());
+                backtrack(n, i+1, ans, curr);
+                row.setCharAt(j, '.');
+                curr.set(i, row.toString());
+            }
+        }
+    }
+
+    private boolean canPlace(List<String> board, int n, int x, int y) {
+        // check column
+        for(int i = 0; i < x; i++) {
+            if(board.get(i).charAt(y) == 'Q') return false;
+        }
+
+        // left diag
+        int i = x, j = y;
+        while(i >= 0 && j >= 0) {
+            if(board.get(i).charAt(j) == 'Q') return false;
+            i--;
+            j--;
+        }
+
+        // right diag
+        i = x;
+        j = y;
+        while(i >= 0 && j < n) {
+            if(board.get(i).charAt(j) == 'Q') return false;
+            i--;
+            j++;
+        }
+
+        return true;
+    }
+}

@@ -1,0 +1,80 @@
+// 353. Design Snake Game
+
+class SnakeGame {
+    boolean[][] gameMap;
+    ArrayDeque<int[]> snake;
+    int width, height;
+    int foodIndex;
+    int[][] food;
+
+    public SnakeGame(int width, int height, int[][] food) {
+        this.width = width;
+        this.height = height;
+        this.foodIndex = 0;
+        this.food = food;
+        gameMap = new boolean[height][width];
+        gameMap[0][0] = true;
+        snake = new ArrayDeque<int[]>();
+        this.snake.offerLast(new int[]{0, 0});
+    }
+    
+    public int move(String direction) {
+        int[] snakeHead = this.snake.peekFirst();
+        int hx = snakeHead[0], hy = snakeHead[1];
+
+        switch(direction) {
+            case "U":
+                hx--;
+                break;
+            case "D":
+                hx++;
+                break;
+            case "L":
+                hy--;
+                break;
+            case "R":
+                hy++;
+                break;
+        }
+
+        int[] snakeTail = this.snake.peekLast();
+        int tx = snakeTail[0], ty = snakeTail[1];
+
+        if(checkIfLost(hx, hy, tx, ty)) return -1;
+
+        if ((this.foodIndex < this.food.length)
+            && (this.food[this.foodIndex][0] == hx)
+            && (this.food[this.foodIndex][1] == hy)) {
+            this.foodIndex++;
+        } else {
+            this.snake.pollLast();
+            this.gameMap[tx][ty] = false;
+        }
+
+        this.snake.addFirst(new int[] {hx, hy});
+        this.gameMap[hx][hy] = true;
+        return this.snake.size() - 1;
+    }
+
+    private boolean checkIfLost(int hx, int hy, int tx, int ty) {
+        return (
+            hx < 0 ||
+            hx >= this.height ||
+            hy < 0 ||
+            hy >= this.width ||
+            (
+                this.gameMap[hx][hy] &&
+                !(
+                    hx == tx &&
+                    hy == ty
+                )
+            )
+        );
+    }
+}
+
+/**
+ * Your SnakeGame object will be instantiated and called as such:
+ * SnakeGame obj = new SnakeGame(width, height, food);
+ * int param_1 = obj.move(direction);
+ */

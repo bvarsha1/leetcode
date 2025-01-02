@@ -1,0 +1,49 @@
+// 17. Letter Combinations of a Phone Number
+
+class Solution {
+    private List<String> ans = new ArrayList<>();
+    private Map<Character, String> letters = Map.of(
+        '2',
+        "abc",
+        '3',
+        "def",
+        '4',
+        "ghi",
+        '5',
+        "jkl",
+        '6',
+        "mno",
+        '7',
+        "pqrs",
+        '8',
+        "tuv",
+        '9',
+        "wxyz"
+    );
+
+    public List<String> letterCombinations(String digits) {
+        if(digits.length() == 0) return ans;
+
+        backtrack(digits, 0, new StringBuilder());
+        return ans;
+    }
+
+    private void backtrack(String digits, int i, StringBuilder path) {
+        // base case - add path string to ans
+        if(path.length() == digits.length()) {
+            ans.add(path.toString());
+            return;
+        }
+
+        // recursive backtracking case
+        String mappedLetters = letters.get(digits.charAt(i));
+        for(char ch : mappedLetters.toCharArray()) {
+            // add current character and run the possibilities
+            path.append(ch);
+            // move to next digit, after choosing current char in path at index i
+            backtrack(digits, i + 1, path);
+            // backtrack, remove character before trying another possibility
+            path.deleteCharAt(i);
+        }
+    }
+}
